@@ -1,6 +1,7 @@
 enum PlayerResultEnum {
 	SAFE = 0,
 	STAR = 1,
+	BOLDER_MOVED = 2,
 	ENTER = 13,
 	SPACE_BAR = 32,
 	ARROW_UP = 38,

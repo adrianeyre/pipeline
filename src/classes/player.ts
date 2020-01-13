@@ -95,6 +95,8 @@ export default class Player implements IPlayer {
 				this.movePlayer(x, y); break;
 			case StriteTypeEnum.SPRITE02:
 				this.addStarPoints(); this.movePlayer(x, y); return PlayerResultEnum.STAR;
+			case StriteTypeEnum.SPRITE03:
+				this.moveBolder(x, y, direction, board, sprites); break;
 		}
 
 		return PlayerResultEnum.SAFE;
@@ -106,6 +108,12 @@ export default class Player implements IPlayer {
 		this.image = this.setImage();
 		this.iteration ++;
 		if (this.iteration > 3) this.iteration = 0;
+	}
+
+	private moveBolder = (x: number, y: number, direction: DirectionEnum, board: IBoard, sprites: ISprite[]): void => {
+		const result = board.moveBolder(x, y, direction, sprites);
+
+		if (result === PlayerResultEnum.BOLDER_MOVED) this.movePlayer(x, y);
 	}
 
 	private addStarPoints = () => this.score += this.STAR_POINTS;
