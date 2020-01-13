@@ -17,7 +17,7 @@ $ npm start
 ```
 
 ## <a name="Shots">Screen Shots</a>
-[![Screenshot](https://raw.githubusercontent.com/adrianeyre/pipelinemaster/src/images/screenshot1.png)](https://raw.githubusercontent.com/adrianeyre/pipeline/master/src/images/screenshot1.png "Game View")
+[![Screenshot](https://raw.githubusercontent.com/adrianeyre/pipeline/master/src/images/screenshot1.png)](https://raw.githubusercontent.com/adrianeyre/pipeline/master/src/images/screenshot1.png "Game View")
 
 [![Screenshot](https://raw.githubusercontent.com/adrianeyre/pipeline/master/src/images/screenshot2.png)](https://raw.githubusercontent.com/adrianeyre/pipeline/master/src/images/screenshot2.png "Game View")
 
