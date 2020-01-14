@@ -1,11 +1,9 @@
 import IPlayerProps from './interfaces/player-props';
-
 import IPlayer from './interfaces/player';
 import IBoard from './interfaces/board';
-import ISprite from './interfaces/sprite';
 import DirectionEnum from './enums/direction-enum';
 import PlayerResultEnum from './enums/player-result-enum';
-import StriteTypeEnum from './enums/sprite-type-enum';
+import SpriteTypeEnum from './enums/sprite-type-enum';
 
 import playerStand1 from '../images/player-stand1.png';
 import playerStand2 from '../images/player-stand2.png';
@@ -71,7 +69,7 @@ export default class Player implements IPlayer {
 		this.isAlive = true;
 	}
 	
-	public move = (direction: DirectionEnum, board: IBoard, sprites: ISprite[]): PlayerResultEnum => {
+	public move = (direction: DirectionEnum, board: IBoard): PlayerResultEnum => {
 		this.direction = direction;
 
 		let x = this.blockX;
@@ -88,15 +86,17 @@ export default class Player implements IPlayer {
 				x --; break;
 		}
 
-		const result = board.validate(x, y);
+		const block = board.validate(x, y);
 
-		switch (result) {
-			case StriteTypeEnum.SPRITE00:
+		switch (block) {
+			case SpriteTypeEnum.SPRITE00:
 				this.movePlayer(x, y); break;
-			case StriteTypeEnum.SPRITE02:
+			case SpriteTypeEnum.SPRITE02:
 				this.addStarPoints(); this.movePlayer(x, y); return PlayerResultEnum.STAR;
-			case StriteTypeEnum.SPRITE03:
-				this.moveBolder(x, y, direction, board, sprites); break;
+			case SpriteTypeEnum.SPRITE03:
+				this.moveBolder(x, y, direction, board); break;
+			case SpriteTypeEnum.SPRITE04:
+				this.movePipe(x, y, direction, board); break;
 		}
 
 		return PlayerResultEnum.SAFE;
@@ -110,11 +110,38 @@ export default class Player implements IPlayer {
 		if (this.iteration > 3) this.iteration = 0;
 	}
 
-	private moveBolder = (x: number, y: number, direction: DirectionEnum, board: IBoard, sprites: ISprite[]): void => {
-		const result = board.moveBolder(x, y, direction, sprites);
+	private moveBolder = (x: number, y: number, direction: DirectionEnum, board: IBoard): void => {
+		const result = board.moveBolder(x, y, direction);
 
 		if (result === PlayerResultEnum.BOLDER_MOVED) this.movePlayer(x, y);
 	}
+
+	private movePipe = (x: number, y: number, direction: DirectionEnum, board: IBoard): void => {
+		switch (direction) {
+			case DirectionEnum.UP:
+			case DirectionEnum.DOWN:
+				this.isVerticalPipe(x, y, board); break;
+			case DirectionEnum.RIGHT:
+			case DirectionEnum.LEFT:
+				this.isHorizontalPipe(x, y, board); break;
+		}
+	}
+
+	private isVerticalPipe = (x: number, y: number, board: IBoard): void => {
+		if (board.isVerticalPipe(x, y)) {
+			this.movePlayer(x, y);
+			this.hidePlayer();
+		}
+	}
+
+	private isHorizontalPipe = (x: number, y: number, board: IBoard): void => {
+		if (board.isHorizontalPipe(x, y)) {
+			this.movePlayer(x, y);
+			this.hidePlayer();
+		}
+	}
+
+	private hidePlayer = (): boolean => this.visable = false;
 
 	private addStarPoints = () => this.score += this.STAR_POINTS;
 

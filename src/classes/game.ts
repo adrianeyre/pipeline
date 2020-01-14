@@ -10,7 +10,7 @@ import IPipelineProps from '../components/pipeline/interfaces/pipeline-props';
 
 export default class Game implements IGame {
 	public player: IPlayer;
-	public sprites: ISprite[];
+	// public sprites: ISprite[];
 	public board: IBoard;
 	public level: number;
 	public timer: any;
@@ -23,8 +23,8 @@ export default class Game implements IGame {
 	
 	constructor(config: IPipelineProps) {
 		this.player = new Player(config);
-		this.board = new Board();
-		this.sprites = this.board.setBoard([], this.player.blockX, this.player.blockY);
+		this.board = new Board({ playerX: this.player.blockX, playerY: this.player.blockY });
+		// this.sprites = this.board.setBoard([], this.player.blockX, this.player.blockY);
 		this.level = 1;
 		this.isGameInPlay = false;
 		this.playerTimeOut = 0;
@@ -52,14 +52,14 @@ export default class Game implements IGame {
 		this.playerTimeOut ++;
 		if (this.playerTimeOut >= this.PLAYER_TIME_OUT) {
 			this.playerTimeOut = 0;
-			this.player.move(DirectionEnum.STAND, this.board, this.sprites)
+			this.player.move(DirectionEnum.STAND, this.board)
 		}
 	}
 
 	private movePlayer = (direction: DirectionEnum): void => {
 		this.playerTimeOut = 0;
-		const result = this.player.move(direction, this.board, this.sprites);
-		this.board.updateBoard(this.sprites, this.player.blockX, this.player.blockY);
+		const result = this.player.move(direction, this.board);
+		this.board.updateBoard(this.player.blockX, this.player.blockY);
 		this.handleInput(result);
 	}
 }

@@ -1,7 +1,6 @@
 import DirectionEnum from '../enums/direction-enum';
 import PlayerResultEnum from '../enums/player-result-enum';
 import IBoard from './board';
-import ISprite from './sprite';
 
 export default interface IPlayer {
 	key: string;
@@ -19,5 +18,5 @@ export default interface IPlayer {
 	lives: number;
 	image: string;
 	isAlive: boolean;
-	move(direction: DirectionEnum, board: IBoard, sprites: ISprite[]): PlayerResultEnum;
+	move(direction: DirectionEnum, board: IBoard): PlayerResultEnum;
 }

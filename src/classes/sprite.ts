@@ -7,6 +7,9 @@ import sprite00 from '../images/sprite00.png'
 import sprite01 from '../images/sprite01.png'
 import sprite02 from '../images/sprite02.png'
 import sprite03 from '../images/sprite03.png'
+import sprite04 from '../images/sprite04.png'
+import sprite05 from '../images/sprite05.png'
+import sprite06 from '../images/sprite06.png'
 
 export default class Sprite implements ISprite {
 	public key: string;
@@ -25,6 +28,9 @@ export default class Sprite implements ISprite {
 		sprite01,
 		sprite02,
 		sprite03,
+		sprite04,
+		sprite05,
+		sprite06,
 	}
 
 	constructor(config: ISpriteProps) {
