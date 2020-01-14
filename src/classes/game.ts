@@ -10,7 +10,6 @@ import IPipelineProps from '../components/pipeline/interfaces/pipeline-props';
 
 export default class Game implements IGame {
 	public player: IPlayer;
-	// public sprites: ISprite[];
 	public board: IBoard;
 	public level: number;
 	public timer: any;
@@ -18,13 +17,12 @@ export default class Game implements IGame {
 	public isGameInPlay: boolean;
 	public timerInterval: number;
 
-	readonly DEFAULT_TIMER_INTERVAL: number = 800;
-	readonly PLAYER_TIME_OUT: number = 2;
+	readonly DEFAULT_TIMER_INTERVAL: number = 50;
+	readonly PLAYER_TIME_OUT: number = 20;
 	
 	constructor(config: IPipelineProps) {
 		this.player = new Player(config);
 		this.board = new Board({ playerX: this.player.blockX, playerY: this.player.blockY });
-		// this.sprites = this.board.setBoard([], this.player.blockX, this.player.blockY);
 		this.level = 1;
 		this.isGameInPlay = false;
 		this.playerTimeOut = 0;
@@ -50,16 +48,25 @@ export default class Game implements IGame {
 
 	public handleTimer = (): void => {
 		this.playerTimeOut ++;
-		if (this.playerTimeOut >= this.PLAYER_TIME_OUT) {
+		if (!this.player.inPipe && this.playerTimeOut >= this.PLAYER_TIME_OUT) {
 			this.playerTimeOut = 0;
 			this.player.move(DirectionEnum.STAND, this.board)
+		}
+
+		if (this.player.inPipe) {
+			const result = this.player.move(this.player.direction, this.board);
+			this.board.updateBoard(this.player.blockX, this.player.blockY);
+			this.handleInput(result);
 		}
 	}
 
 	private movePlayer = (direction: DirectionEnum): void => {
 		this.playerTimeOut = 0;
-		const result = this.player.move(direction, this.board);
-		this.board.updateBoard(this.player.blockX, this.player.blockY);
-		this.handleInput(result);
+
+		if (!this.player.inPipe) {
+			const result = this.player.move(direction, this.board);
+			this.board.updateBoard(this.player.blockX, this.player.blockY);
+			this.handleInput(result);
+		}
 	}
 }

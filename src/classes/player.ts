@@ -35,6 +35,7 @@ export default class Player implements IPlayer {
 	public lives: number;
 	public image: string;
 	public isAlive: boolean;
+	public inPipe: boolean;
 
 	readonly STAR_POINTS: number = 10;
 	readonly INITIAL_PLAYER_LIVES: number = 3;
@@ -67,6 +68,7 @@ export default class Player implements IPlayer {
 		this.lives = config.initialPlayerLives || this.INITIAL_PLAYER_LIVES;
 		this.image = this.setImage();
 		this.isAlive = true;
+		this.inPipe = false;
 	}
 	
 	public move = (direction: DirectionEnum, board: IBoard): PlayerResultEnum => {
@@ -89,14 +91,27 @@ export default class Player implements IPlayer {
 		const block = board.validate(x, y);
 
 		switch (block) {
-			case SpriteTypeEnum.SPRITE00:
-				this.movePlayer(x, y); break;
-			case SpriteTypeEnum.SPRITE02:
+			case SpriteTypeEnum.BLANK:
+				this.inPipe = false; this.showPlayer(); this.movePlayer(x, y); break;
+			case SpriteTypeEnum.POINTS:
 				this.addStarPoints(); this.movePlayer(x, y); return PlayerResultEnum.STAR;
-			case SpriteTypeEnum.SPRITE03:
+			case SpriteTypeEnum.BOLDER:
 				this.moveBolder(x, y, direction, board); break;
-			case SpriteTypeEnum.SPRITE04:
+			case SpriteTypeEnum.HORIZONTAL_PIPE:
+			case SpriteTypeEnum.VERTICAL_PIPE:
+			case SpriteTypeEnum.CONNECTION_PIPE:
 				this.movePipe(x, y, direction, board); break;
+			case SpriteTypeEnum.TELEPORT01:
+			case SpriteTypeEnum.TELEPORT02:
+			case SpriteTypeEnum.TELEPORT03:
+			case SpriteTypeEnum.TELEPORT04:
+			case SpriteTypeEnum.TELEPORT05:
+			case SpriteTypeEnum.TELEPORT06:
+			case SpriteTypeEnum.TELEPORT07:
+			case SpriteTypeEnum.TELEPORT08:
+			case SpriteTypeEnum.TELEPORT09:
+			case SpriteTypeEnum.TELEPORT10:
+				this.teleport(x, y, board, block); break;
 		}
 
 		return PlayerResultEnum.SAFE;
@@ -117,32 +132,78 @@ export default class Player implements IPlayer {
 	}
 
 	private movePipe = (x: number, y: number, direction: DirectionEnum, board: IBoard): void => {
+		let isDirectionHorizontal = false,
+			isDirectionVertical = false;
+
+		const isConnectionPipe = this.isConnectionPipe(x, y, board);
+		const isLeftHorizontalPipe = this.isHorizontalPipe(x - 1, y, board);
+		const isRightHorizontalPipe = this.isHorizontalPipe(x + 1, y, board);
+		const isUpVertialPipe = this.isVerticalPipe(x, y - 1, board);
+		const isDownVertialPipe = this.isVerticalPipe(x, y + 1, board);
+		const isVerticalPipe = this.isVerticalPipe(x, y, board);
+		const isHorizontalPipe = this.isHorizontalPipe(x, y, board);
+
 		switch (direction) {
 			case DirectionEnum.UP:
 			case DirectionEnum.DOWN:
-				this.isVerticalPipe(x, y, board); break;
+				isDirectionVertical = true; break;
 			case DirectionEnum.RIGHT:
 			case DirectionEnum.LEFT:
-				this.isHorizontalPipe(x, y, board); break;
+				isDirectionHorizontal = true; break;
 		}
-	}
 
-	private isVerticalPipe = (x: number, y: number, board: IBoard): void => {
-		if (board.isVerticalPipe(x, y)) {
+		if ((this.inPipe && isDirectionHorizontal && isVerticalPipe) || (this.inPipe && isDirectionVertical && isHorizontalPipe)) {
 			this.movePlayer(x, y);
 			this.hidePlayer();
 		}
-	}
 
-	private isHorizontalPipe = (x: number, y: number, board: IBoard): void => {
-		if (board.isHorizontalPipe(x, y)) {
+		if ((isVerticalPipe && isDirectionVertical) || (isHorizontalPipe && isDirectionHorizontal)) {
+			this.inPipe = true;
 			this.movePlayer(x, y);
 			this.hidePlayer();
 		}
+
+		if (isConnectionPipe) {
+			let direction = -1;
+			this.movePlayer(x, y);
+			if (isDirectionVertical && isLeftHorizontalPipe) direction = DirectionEnum.LEFT;
+			if (isDirectionVertical && isRightHorizontalPipe) direction = DirectionEnum.RIGHT;
+			if (isDirectionHorizontal && isUpVertialPipe) direction = DirectionEnum.UP;
+			if (isDirectionHorizontal && isDownVertialPipe) direction = DirectionEnum.DOWN;
+
+			if (direction < 0) {
+				switch (this.direction) {
+					case DirectionEnum.UP:
+						direction = DirectionEnum.DOWN; break;
+					case DirectionEnum.DOWN:
+						direction = DirectionEnum.UP; break;
+					case DirectionEnum.RIGHT:
+						direction = DirectionEnum.LEFT; break;
+					case DirectionEnum.LEFT:
+						direction = DirectionEnum.RIGHT; break;
+				}
+			}
+
+			this.move(direction, board);
+		}
 	}
 
+	private teleport = (x: number, y: number, board: IBoard, block: SpriteTypeEnum): void => {
+		if (this.direction === DirectionEnum.STAND) return;
+
+		console.log(`X: ${x}, Y: ${y}`)
+		const { xPos, yPos } = board.teleport(x, y, block);
+		console.log('TELEPORT')
+		console.log(xPos)
+
+		if (xPos && yPos) this.movePlayer(xPos, yPos);
+	}
+
+	private isVerticalPipe = (x: number, y: number, board: IBoard): boolean => board.isVerticalPipe(x, y);
+	private isHorizontalPipe = (x: number, y: number, board: IBoard): boolean => board.isHorizontalPipe(x, y);
+	private isConnectionPipe = (x: number, y: number, board: IBoard): boolean => board.isConnectionPipe(x, y);
 	private hidePlayer = (): boolean => this.visable = false;
-
+	private showPlayer = (): boolean => this.visable = true;
 	private addStarPoints = () => this.score += this.STAR_POINTS;
 
 	private setImage = (): string => this.playerImages[this.direction][this.iteration];

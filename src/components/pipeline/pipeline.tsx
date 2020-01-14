@@ -6,6 +6,7 @@ import IPipelineState from './interfaces/pipeline-state';
 import GameStatusTop from '../game-status-top/game-status-top';
 import DrawSprite from '../draw-sprite/draw-sprite';
 import InfoBoard from '../info-board/info-board';
+import MobileButtons from '../mobile-buttons/mobile-buttons';
 
 import './styles/pipeline.scss';
 import PlayerResultEnum from 'classes/enums/player-result-enum';
@@ -54,6 +55,8 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 
 				<DrawSprite sprite={ this.state.game.player } handleClick={ this.handleClickPlayer }height={ this.state.spriteHeight } width={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } />
 			</div> }
+
+			{ this.state.game.isGameInPlay && this.state.containerWidth < 600 && <div style={ this.styleGameButtons() }><MobileButtons handleMobileButton={ this.handleMobileButton }/></div> }
 		</div>
 	}
 
@@ -65,6 +68,13 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 		position: 'absolute' as 'absolute',
 		width: `100%`,
 		maxWidth: `${ this.state.containerHeight }px`,
+	})
+
+	private styleGameButtons = () => ({
+		position: 'absolute' as 'absolute',
+		width: `100%`,
+		maxWidth: `${ this.state.containerHeight }px`,
+		top: `${ this.state.containerWidth / 100 * 100 }px`,
 	})
 
 	private startGame = async (): Promise<void> => {
@@ -126,6 +136,8 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 		this.stopTimer();
 		this.startTimer();
 	}
+
+	private handleMobileButton = async (direction: PlayerResultEnum): Promise<void> => await this.handleInput(direction);
 
 	private handleClick = async (sprite: ISprite) => {
 		

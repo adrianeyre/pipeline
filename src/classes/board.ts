@@ -31,13 +31,13 @@ export default class Board implements IBoard {
 		let xPos = this.xStart(playerX);
 		let yPos = this.yStart(playerY);
 
-		for(let y = 1; y <= this.SPRITE_BLOCKS_HEIGHT; y++) {
-			for(let x = 1; x <= this.SPRITE_BLOCKS_WIDTH; x++) {
+		for(let x = 1; x <= this.SPRITE_BLOCKS_WIDTH; x++) {
+			for(let y = 1; y <= this.SPRITE_BLOCKS_HEIGHT; y++) {
 				this.sprites.push(this.newBlock(x, y, this.board[yPos][xPos]));
-				xPos ++;
+				yPos ++;
 			}
-			xPos = this.xStart(playerX);
-			yPos ++;
+			yPos = this.yStart(playerY);
+			xPos ++;
 		}
 	}
 
@@ -45,21 +45,17 @@ export default class Board implements IBoard {
 		let xPos = this.xStart(playerX);
 		let yPos = this.yStart(playerY);
 
-		for(let y = 1; y <= this.SPRITE_BLOCKS_HEIGHT; y++) {
-			for(let x = 1; x <= this.SPRITE_BLOCKS_WIDTH; x++) {
+		for(let x = 1; x <= this.SPRITE_BLOCKS_WIDTH; x++) {
+			for(let y = 1; y <= this.SPRITE_BLOCKS_HEIGHT; y++) {
 				this.updateBlock(this.board[yPos][xPos], x, y);
-				xPos ++;
+				yPos ++;
 			}
-			xPos = this.xStart(playerX);
-			yPos ++;
+			yPos = this.yStart(playerY);
+			xPos ++;
 		}
 	}
 
-	public validate = (x: number, y: number): StriteTypeEnum => {
-		const sprite = this.board[y-1][x-1];
-		return StriteTypeEnum[this.spriteName(sprite)];
-	}
-
+	public validate = (x: number, y: number): StriteTypeEnum => this.board[y-1][x-1];
 	public setBlock = (block: number, x: number, y: number): number => this.board[y-1][x-1] = block;
 
 	public moveBolder = (x: number, y: number, direction: DirectionEnum): PlayerResultEnum => {
@@ -88,14 +84,21 @@ export default class Board implements IBoard {
 		return PlayerResultEnum.SAFE;
 	}
 
-	public movePipe = (x: number, y: number, direction: DirectionEnum): PlayerResultEnum => {
+	public teleport = (playerX: number, playerY: number, block: SpriteTypeEnum): any => {
+		for (let y = 1; y < this.board.length; y++) {
+			const x = this.board[y].indexOf(block);
+			if (x > -1 && playerX - 1 !== x && playerY - 1 !== y) {
+				return { xPos: x + 1, yPos: y + 1 };
+			}
+		}
 
-		return PlayerResultEnum.SAFE;
+		return { xPos: null, yPos: null };
 	}
 
-	public isVerticalPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === 4;
-	public isHorizontalPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === 6;
-	public isJunctionPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === 5;
+	public isVerticalPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.VERTICAL_PIPE;
+	public isHorizontalPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.HORIZONTAL_PIPE
+	public isConnectionPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.CONNECTION_PIPE;
+	public isBlankBlock = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.BLANK;
 
 	private updateBlock = (block: number, x: number, y: number): void => {
 		const sprite = this.sprites.find((spr: ISprite) => spr.key === `sprite-${ x }-${ y }`);

@@ -18,5 +18,6 @@ export default interface IPlayer {
 	lives: number;
 	image: string;
 	isAlive: boolean;
+	inPipe: boolean;
 	move(direction: DirectionEnum, board: IBoard): PlayerResultEnum;
 }
