@@ -119,6 +119,12 @@ export default class Player implements IPlayer {
 			case SpriteTypeEnum.TELEPORT09:
 			case SpriteTypeEnum.TELEPORT10:
 				this.teleport(x, y, board, block); break;
+			case SpriteTypeEnum.WALL:
+			case SpriteTypeEnum.WALL01:
+			case SpriteTypeEnum.WALL02:
+			case SpriteTypeEnum.WALL03:
+			case SpriteTypeEnum.WALL04:
+				this.useAxe(x, y, board, block); break;
 			case SpriteTypeEnum.RED_GATE:
 			case SpriteTypeEnum.BLUE_GATE:
 			case SpriteTypeEnum.LIGHT_GREEN_GATE:
@@ -140,6 +146,7 @@ export default class Player implements IPlayer {
 			case SpriteTypeEnum.BROWN_KEY:
 			case SpriteTypeEnum.GREY_KEY:
 			case SpriteTypeEnum.GREEN_KEY:
+			case SpriteTypeEnum.AXE:
 				this.addInventory(x, y, board, block); break;
 		}
 
@@ -158,6 +165,10 @@ export default class Player implements IPlayer {
 		const result = board.moveBolder(x, y, direction);
 
 		if (result === PlayerResultEnum.BOLDER_MOVED) this.movePlayer(x, y);
+	}
+
+	private useAxe = (x: number, y: number, board: IBoard, block: number) => {
+		
 	}
 
 	private addInventory = (x: number, y: number, board: IBoard, block: number) => {

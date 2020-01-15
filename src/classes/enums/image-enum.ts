@@ -41,6 +41,7 @@ enum ImageEnum {
 	SPRITE39 = 'sprite39',
 	SPRITE40 = 'sprite40',
 	SPRITE41 = 'sprite41',
+	SPRITE42 = 'sprite42',
 }
 
 export default ImageEnum;

@@ -1,4 +1,4 @@
-$info-board-background: black;
+$info-board-background: #2774EC;
 $info-board-text-colour: white;
 
 .info-board {
@@ -7,7 +7,7 @@ $info-board-text-colour: white;
 	background-color: $info-board-background;
 	opacity: 0.7;
 	z-index: 10000;
-	margin-top: 5%;
+	margin: 8% 10%;
 
 	.game-over-area {
 		margin: 2em;

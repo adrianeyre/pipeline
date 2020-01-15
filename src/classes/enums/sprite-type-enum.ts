@@ -41,6 +41,7 @@ enum StriteTypeEnum {
 	BROWN_KEY = 39,
 	GREY_KEY = 40,
 	GREEN_KEY = 41,
+	AXE = 42,
 }
 
 export default StriteTypeEnum;
