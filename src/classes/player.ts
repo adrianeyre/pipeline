@@ -258,6 +258,5 @@ export default class Player implements IPlayer {
 	private hidePlayer = (): boolean => this.visable = false;
 	private showPlayer = (): boolean => this.visable = true;
 	private addStarPoints = () => this.score += this.STAR_POINTS;
-
 	private setImage = (): string => this.playerImages[this.direction][this.iteration];
 }
