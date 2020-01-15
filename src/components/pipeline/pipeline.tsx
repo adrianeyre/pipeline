@@ -48,7 +48,9 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 		return <div className="pipeline-play-container" ref={(d) => { this.container = d }} style={ this.styleContainer() }>
 			<div style={ this.styleStatusTop() }><GameStatusTop score={ this.state.game.player.score } lives={ this.state.game.player.lives } /></div>
 
-			{ !this.state.game.isGameInPlay && <InfoBoard gameOver={ this.state.game.player.lives < 1 } startGame={ this.startGame } score={ this.state.game.player.score } containerHeight={ this.state.containerHeight } /> }
+			{ !this.state.game.isGameInPlay && <div style={ this.styleInfoBoard() }>
+				<InfoBoard gameOver={ this.state.game.player.lives < 1 } startGame={ this.startGame } score={ this.state.game.player.score } containerHeight={ this.state.containerHeight } />
+			</div> }
 
 			{ this.state.game.isGameInPlay && <div className="play-area">
 				{ this.state.game.board.sprites?.map((sprite: ISprite) => <DrawSprite key={ sprite.key } sprite={ sprite } handleClick={ this.handleClick } height={ this.state.spriteHeight } width={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } />) }
@@ -63,6 +65,12 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 	}
 
 	private styleContainer = () => ({
+		maxWidth: `${ this.state.containerHeight }px`,
+	})
+
+	private styleInfoBoard = () => ({
+		position: 'absolute' as 'absolute',
+		width: `100%`,
 		maxWidth: `${ this.state.containerHeight }px`,
 	})
 

@@ -168,7 +168,10 @@ export default class Player implements IPlayer {
 	}
 
 	private useAxe = (x: number, y: number, board: IBoard, block: number) => {
-		
+		if (board.inventory.useItem(SpriteTypeEnum.AXE) === PlayerResultEnum.INVENTORY_USED) {
+			board.setBlock(0, x, y);
+			this.movePlayer(x, y);
+		}
 	}
 
 	private addInventory = (x: number, y: number, board: IBoard, block: number) => {
@@ -244,11 +247,7 @@ export default class Player implements IPlayer {
 
 	private teleport = (x: number, y: number, board: IBoard, block: SpriteTypeEnum): void => {
 		if (this.direction === DirectionEnum.STAND) return;
-
-		console.log(`X: ${x}, Y: ${y}`)
 		const { xPos, yPos } = board.teleport(x, y, block);
-		console.log('TELEPORT')
-		console.log(xPos)
 
 		if (xPos && yPos) this.movePlayer(xPos, yPos);
 	}

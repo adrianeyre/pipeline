@@ -21,7 +21,7 @@ export default class InfoBoard extends React.Component<IInfoBoardProps, {}> {
 			</div> }
 
 			<div className="info-board-instructions">
-				<p>This is a remake of two of my favourite games for the <a href="https://en.wikipedia.org/wiki/BBC_Micro" target="_blank"> BBC Micro</a>, <a href="https://en.wikipedia.org/wiki/Repton_(video_game)" target="_blank">Repton</a> and <a href="https://en.wikipedia.org/wiki/Pipeline_(video_game)" target="_blank">Pipeline</a>.</p>
+				<p>This is a remake of two of my favourite games for the <a href="https://en.wikipedia.org/wiki/BBC_Micro" target="_blank" rel="noopener noreferrer"> BBC Micro</a>, <a href="https://en.wikipedia.org/wiki/Repton_(video_game)" target="_blank" rel="noopener noreferrer">Repton</a> and <a href="https://en.wikipedia.org/wiki/Pipeline_(video_game)" target="_blank" rel="noopener noreferrer">Pipeline</a>.</p>
 				<p>You have to navigate Repton around the playing field collecting all of the stars. There are plenty of puzzles to solve including gates, keys, boulders and teleports</p>
 			</div>
 
