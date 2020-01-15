@@ -7,9 +7,9 @@ import GameStatusTop from '../game-status-top/game-status-top';
 import DrawSprite from '../draw-sprite/draw-sprite';
 import InfoBoard from '../info-board/info-board';
 import MobileButtons from '../mobile-buttons/mobile-buttons';
+import PlayerResultEnum from 'classes/enums/player-result-enum';
 
 import './styles/pipeline.scss';
-import PlayerResultEnum from 'classes/enums/player-result-enum';
 
 export default class Pipeline extends React.Component<IPipelineProps, IPipelineState> {
 	private SPRITE_BLOCKS_WIDTH: number = 36;
@@ -53,6 +53,8 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 			{ this.state.game.isGameInPlay && <div className="play-area">
 				{ this.state.game.board.sprites?.map((sprite: ISprite) => <DrawSprite key={ sprite.key } sprite={ sprite } handleClick={ this.handleClick } height={ this.state.spriteHeight } width={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } />) }
 
+				{ this.state.game.board.inventory.sprites?.map((sprite: ISprite) => <DrawSprite key={ sprite.key } sprite={ sprite } handleClick={ this.handleClick } height={ this.state.spriteHeight } width={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } />) }
+
 				<DrawSprite sprite={ this.state.game.player } handleClick={ this.handleClickPlayer }height={ this.state.spriteHeight } width={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } />
 			</div> }
 
@@ -74,7 +76,7 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 		position: 'absolute' as 'absolute',
 		width: `100%`,
 		maxWidth: `${ this.state.containerHeight }px`,
-		top: `${ this.state.containerWidth / 100 * 100 }px`,
+		top: `${ this.state.containerWidth / 100 * 105 }px`,
 	})
 
 	private startGame = async (): Promise<void> => {

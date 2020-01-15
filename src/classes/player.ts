@@ -22,6 +22,7 @@ import playerRight4 from '../images/player-right4.png';
 export default class Player implements IPlayer {
 	public key: string;
 	public visable: boolean;
+	public outline: boolean;
 	public x: number;
 	public y: number;
 	public blockX: number;
@@ -55,6 +56,7 @@ export default class Player implements IPlayer {
 	constructor(config: IPlayerProps) {
 		this.key = 'player';
 		this.visable = true;
+		this.outline = false;
 		this.iteration = 0;
 		this.x = (this.INITIAL_PLAYER_X - 1 ) * this.PLAYER_WIDTH + 1;
 		this.y = (this.INITIAL_PLAYER_Y - 1 ) * this.PLATER_HEIGHT + 1;
@@ -69,6 +71,11 @@ export default class Player implements IPlayer {
 		this.image = this.setImage();
 		this.isAlive = true;
 		this.inPipe = false;
+	}
+
+	public setStartPosision = (x: number, y: number): void => {
+		this.blockX = x;
+		this.blockY = y;
 	}
 	
 	public move = (direction: DirectionEnum, board: IBoard): PlayerResultEnum => {
@@ -112,6 +119,28 @@ export default class Player implements IPlayer {
 			case SpriteTypeEnum.TELEPORT09:
 			case SpriteTypeEnum.TELEPORT10:
 				this.teleport(x, y, board, block); break;
+			case SpriteTypeEnum.RED_GATE:
+			case SpriteTypeEnum.BLUE_GATE:
+			case SpriteTypeEnum.LIGHT_GREEN_GATE:
+			case SpriteTypeEnum.YELLOW_GATE:
+			case SpriteTypeEnum.PURPLE_GATE:
+			case SpriteTypeEnum.LIGHT_BLUE_GATE:
+			case SpriteTypeEnum.WHITE_GATE:
+			case SpriteTypeEnum.BROWN_GATE:
+			case SpriteTypeEnum.GREY_GATE:
+			case SpriteTypeEnum.GREEN_GATE:
+				this.openGate(x, y, board, block); break;
+			case SpriteTypeEnum.RED_KEY:
+			case SpriteTypeEnum.BLUE_KEY:
+			case SpriteTypeEnum.LIGHT_GREEN_KEY:
+			case SpriteTypeEnum.YELLOW_KEY:
+			case SpriteTypeEnum.PURPLE_KEY:
+			case SpriteTypeEnum.LIGHT_BLUE_KEY:
+			case SpriteTypeEnum.WHITE_KEY:
+			case SpriteTypeEnum.BROWN_KEY:
+			case SpriteTypeEnum.GREY_KEY:
+			case SpriteTypeEnum.GREEN_KEY:
+				this.addInventory(x, y, board, block); break;
 		}
 
 		return PlayerResultEnum.SAFE;
@@ -129,6 +158,20 @@ export default class Player implements IPlayer {
 		const result = board.moveBolder(x, y, direction);
 
 		if (result === PlayerResultEnum.BOLDER_MOVED) this.movePlayer(x, y);
+	}
+
+	private addInventory = (x: number, y: number, board: IBoard, block: number) => {
+		const result = board.inventory.addItem(block);
+		if (result === PlayerResultEnum.INVENTORY_ADDED) board.setBlock(0, x, y);
+		this.movePlayer(x, y);
+	}
+
+	private openGate = (x: number, y: number, board: IBoard, block: number) => {
+		const result = board.inventory.useItem(block + 10);
+		if (result === PlayerResultEnum.INVENTORY_USED) {
+			board.setBlock(0, x, y);
+			this.movePlayer(x, y);
+		}
 	}
 
 	private movePipe = (x: number, y: number, direction: DirectionEnum, board: IBoard): void => {

@@ -21,12 +21,14 @@ export default class Game implements IGame {
 	readonly PLAYER_TIME_OUT: number = 20;
 	
 	constructor(config: IPipelineProps) {
-		this.player = new Player(config);
-		this.board = new Board({ playerX: this.player.blockX, playerY: this.player.blockY });
 		this.level = 1;
+		this.player = new Player(config);
+		this.board = new Board({ currentLevel: this.level, playerX: this.player.blockX, playerY: this.player.blockY });
 		this.isGameInPlay = false;
 		this.playerTimeOut = 0;
 		this.timerInterval = this.DEFAULT_TIMER_INTERVAL;
+
+		this.player.setStartPosision(this.board.startX, this.board.startY);
 	}
 
 	public handleInput = (playerResult: PlayerResultEnum, sprite?: ISprite): void => {

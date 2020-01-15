@@ -4,6 +4,7 @@ import ImageEnum from '../enums/image-enum';
 export default interface ISprite {
 	key: string;
 	visable: boolean;
+	outline: boolean;
 	x: number;
 	y: number;
 	width: number;

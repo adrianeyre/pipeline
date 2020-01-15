@@ -10,4 +10,5 @@ export default interface ISpriteProps {
 	height: number;
 	image: ImageEnum;
 	type: SpriteTypeEnum;
+	outline: boolean;
 }

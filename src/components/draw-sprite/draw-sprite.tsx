@@ -2,6 +2,8 @@ import React from 'react';
 
 import IDrawSpriteProps from './interfaces/draw-sprite-props';
 
+import './styles/draw-sprite.scss';
+
 export default class DrawSprite extends React.Component<IDrawSpriteProps, {}> {
 	private offsetHeight: number = 0;
 	private offsetWidth: number = 0;
@@ -9,8 +11,14 @@ export default class DrawSprite extends React.Component<IDrawSpriteProps, {}> {
 	public render() {
 		if (!this.props.sprite.visable) return <div></div>
 
-		return <div key={ this.props.sprite.key } onClick={ this.props.handleClick.bind(this, this.props.sprite) } style={ this.styleSprite(this.props.sprite.x, this.props.sprite.y) }>
+		return <div
+				key={ this.props.sprite.key }
+				onClick={ this.props.handleClick.bind(this, this.props.sprite) }
+				style={ this.styleSprite(this.props.sprite.x, this.props.sprite.y) }
+				className="game-sprite"
+			>
 			<img
+				className={ this.props.sprite.outline ? 'outline' : '' }
 				src={ this.props.sprite.image }
 				height={ this.props.height * this.props.sprite.height }
 				width={ this.props.width * this.props.sprite.width }

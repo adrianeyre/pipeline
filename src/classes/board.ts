@@ -1,6 +1,10 @@
+import { cloneDeep } from 'lodash';
+
 import IBoard from './interfaces/board';
 import ISprite from './interfaces/sprite';
+import IInventory from './interfaces/inventory';
 import Sprite from './sprite';
+import Inventory from './inventory';
 import SpriteTypeEnum from './enums/sprite-type-enum';
 import ImageEnum from './enums/image-enum';
 import StriteTypeEnum from './enums/sprite-type-enum';
@@ -8,22 +12,39 @@ import PlayerResultEnum from './enums/player-result-enum';
 import DirectionEnum from './enums/direction-enum';
 import IBoardProps from './interfaces/board-props';
 
-import * as boardData from './data/levels';
+import * as level01 from './data/level01';
 
 export default class Board implements IBoard {
 	public board: number[][];
 	public sprites: ISprite[];
+	public inventory: IInventory;
+	public currentLevel: number;
+	public startX: number;
+	public startY: number;
 
 	readonly SPRITE_BLOCKS_WIDTH: number = 12;
 	readonly SPRITE_BLOCKS_HEIGHT: number = 12;
-	readonly X_OFFSET: number = 3;
-	readonly Y_OFFSET: number = 3;
+	readonly SPRITE_WIDTH: number = 3;
+	readonly SPRITE_HEIGHT: number = 3;
+	readonly levels = [level01];
 
 	constructor(config: IBoardProps) {
-		this.board = boardData.default[0];
+		this.currentLevel = config.currentLevel
+		this.board = cloneDeep(this.levels[this.currentLevel - 1].default);
 		this.sprites = [];
-		
-		this.setBoard(config.playerX, config.playerY);
+		this.inventory = new Inventory({
+			spriteBlockWidth: this.SPRITE_BLOCKS_WIDTH,
+			spriteBlockHeight: this.SPRITE_BLOCKS_HEIGHT,
+			spriteWidth: this.SPRITE_WIDTH,
+			spriteHeight: this.SPRITE_HEIGHT,
+		});
+
+		const { xPos, yPos } = this.getPlayerStartPosition();
+		this.startX = xPos ?? config.playerX;
+		this.startY = yPos ?? config.playerY;
+		if (xPos && yPos) this.board[yPos-1][xPos-1] = 0;
+
+		this.setBoard(this.startX, this.startY);
 	}
 
 	public setBoard = (playerX: number, playerY: number): void => {
@@ -31,9 +52,9 @@ export default class Board implements IBoard {
 		let xPos = this.xStart(playerX);
 		let yPos = this.yStart(playerY);
 
-		for(let x = 1; x <= this.SPRITE_BLOCKS_WIDTH; x++) {
+		for (let x = 1; x <= this.SPRITE_BLOCKS_WIDTH; x++) {
 			for(let y = 1; y <= this.SPRITE_BLOCKS_HEIGHT; y++) {
-				this.sprites.push(this.newBlock(x, y, this.board[yPos][xPos]));
+				this.sprites.push(this.newBlock(x, y, this.SPRITE_WIDTH, this.SPRITE_HEIGHT, this.board[yPos][xPos]));
 				yPos ++;
 			}
 			yPos = this.yStart(playerY);
@@ -95,6 +116,17 @@ export default class Board implements IBoard {
 		return { xPos: null, yPos: null };
 	}
 
+	private getPlayerStartPosition = (): any => {
+		for (let y = 1; y < this.board.length; y++) {
+			const x = this.board[y].indexOf(-1);
+			if (x > -1) {
+				return { xPos: x + 1, yPos: y + 1 };
+			}
+		}
+
+		return { xPos: null, yPos: null };
+	}
+
 	public isVerticalPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.VERTICAL_PIPE;
 	public isHorizontalPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.HORIZONTAL_PIPE
 	public isConnectionPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.CONNECTION_PIPE;
@@ -111,16 +143,21 @@ export default class Board implements IBoard {
 	private xStart = (playerX: number): number => playerX - Math.floor(this.SPRITE_BLOCKS_WIDTH / 2) - 1;
 	private yStart = (playerY: number): number => playerY - Math.floor(this.SPRITE_BLOCKS_HEIGHT / 2) - 1;
 
-	private newBlock = (x: number, y: number, block: number): ISprite => new Sprite({
-		key: `sprite-${ x }-${ y }`,
-		visable: true,
-		x: (x - 1) * this.X_OFFSET + 1,
-		y: (y - 1) * this.Y_OFFSET + 1,
-		width: 3,
-		height: 3,
-		image: ImageEnum[this.spriteName(block)],
-		type:  SpriteTypeEnum[this.spriteName(block)],
-	});
+	private newBlock = (x: number, y: number, width: number, height: number, block: number): ISprite => {
+		const type: string = SpriteTypeEnum[block];
+
+		return new Sprite({
+			key: `sprite-${ x }-${ y }`,
+			visable: true,
+			x: (x - 1) * width + 1,
+			y: (y - 1) * height + 1,
+			width,
+			height,
+			image: ImageEnum[this.spriteName(block)],
+			type: SpriteTypeEnum[type],
+			outline: false,
+		})
+	}
 
 	private spriteName = (sprite: number) => `SPRITE${ sprite.toString().length === 1 ? '0' : '' }${ sprite }`;
 }

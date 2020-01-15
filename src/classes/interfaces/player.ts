@@ -5,6 +5,7 @@ import IBoard from './board';
 export default interface IPlayer {
 	key: string;
 	visable: boolean;
+	outline: boolean;
 	x: number;
 	y: number;
 	blockX: number;
@@ -19,5 +20,6 @@ export default interface IPlayer {
 	image: string;
 	isAlive: boolean;
 	inPipe: boolean;
+	setStartPosision(x: number, y: number): void;
 	move(direction: DirectionEnum, board: IBoard): PlayerResultEnum;
 }
