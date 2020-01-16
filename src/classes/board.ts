@@ -12,6 +12,7 @@ import ImageEnum from './enums/image-enum';
 import StriteTypeEnum from './enums/sprite-type-enum';
 import PlayerResultEnum from './enums/player-result-enum';
 import DirectionEnum from './enums/direction-enum';
+import MonsterTypeEnum from './enums/monster-type-enum';
 import IBoardProps from './interfaces/board-props';
 
 import * as level01 from './data/level01';
@@ -153,8 +154,12 @@ export default class Board implements IBoard {
 
 		for(let x = 0; x <= this.board.length; x++) {
 			for(let y = 0; y < this.board[0].length; y++) {
-				if (this.board[y][x] === 999) {
+				const block = this.board[y][x];
+				if (block >= 997 && block <= 999) {
 					this.board[y][x] = 0;
+					const type: string = MonsterTypeEnum[block];
+					const direction: string = DirectionEnum[block - 996];
+
 					monsters.push(new Monster({
 						key: `monster-${ monsters.length + 1 }`,
 						visable: true,
@@ -164,6 +169,8 @@ export default class Board implements IBoard {
 						height: 3,
 						blocksWidth: this.SPRITE_BLOCKS_WIDTH,
 						blocksHeight: this.SPRITE_BLOCKS_HEIGHT,
+						type: MonsterTypeEnum[type],
+						direction: DirectionEnum[direction],
 					}));
 				}
 			}

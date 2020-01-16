@@ -3,6 +3,7 @@ import IMonster from './interfaces/monster';
 import IBoard from './interfaces/board';
 import DirectionEnum from './enums/direction-enum';
 import PlayerResultEnum from './enums/player-result-enum';
+import MonsterTypeEnum from './enums/monster-type-enum';
 
 import monster01 from '../images/monster01.png';
 import monster02 from '../images/monster02.png';
@@ -22,12 +23,12 @@ export default class Monster implements IMonster {
 	public iteration: number;
 	public zIndex: number
 	public direction: DirectionEnum;
+	public type: MonsterTypeEnum;
 	public image: string;
 	public isAlive: boolean;
 
 	readonly MONSTER_ZINDEX: number = 6000;
 	readonly playerImages: string[][] = [
-		[monster01, monster02, monster01, monster02],
 		[monster01, monster02, monster01, monster02],
 		[monster01, monster02, monster01, monster02],
 		[monster01, monster02, monster01, monster02],
@@ -48,7 +49,8 @@ export default class Monster implements IMonster {
 		this.width = config.width;
 		this.height = config.height;
 		this.zIndex = this.MONSTER_ZINDEX;
-		this.direction = DirectionEnum.RIGHT;
+		this.direction = config.direction;
+		this.type = config.type;
 		this.image = this.setImage();
 		this.isAlive = true;
 	}
@@ -75,7 +77,7 @@ export default class Monster implements IMonster {
 			return this.moveMonstersWithPlayer(playerX, playerY);
 		}
 
-		this.changeDirection();
+		this.changeDirection(board, this.blockX, this.blockY);
 		return this.move(board, playerX, playerY);
 	}
 
@@ -87,13 +89,13 @@ export default class Monster implements IMonster {
 			this.blockX >= playerX - horizontalGap &&
 			this.blockX <= playerX + horizontalGap &&
 			this.blockY >= playerY - verticalGap &&
-			this.blockY <= playerY + verticalGap
+			this.blockY < playerY + verticalGap
 		) {
 			this.visable = true;
 			let x = playerX - horizontalGap;
 			let y = playerY - verticalGap;
-			this.x = (this.blockX - x) * 3 + 1;
-			this.y = (this.blockY - y) * 3 + 1;
+			this.x = (this.blockX - x) * this.width + 1;
+			this.y = (this.blockY - y) * this.height + 1;
 		} else {
 			this.visable = false;
 		}
@@ -101,12 +103,44 @@ export default class Monster implements IMonster {
 		return playerX === this.blockX && playerY === this.blockY ? PlayerResultEnum.LOOSE_LIFE : PlayerResultEnum.SAFE;
 	}
 
-	private changeDirection = (): void => {
+	private changeDirection = (board: IBoard, x: number, y: number): DirectionEnum => {
+		if (this.type === MonsterTypeEnum.DIRECTIONAL) {
+			const isUpBlank = board.isBlankBlock(x, y - 1);
+			const isRightBlank = board.isBlankBlock(x + 1, y);
+			const isDownBlank = board.isBlankBlock(x, y + 1);
+			const isLeftBlank = board.isBlankBlock(x - 1, y);
+
+			switch (this.direction) {
+				case DirectionEnum.UP:
+					if (isRightBlank) return this.direction = DirectionEnum.RIGHT;
+					if (isLeftBlank) return this.direction = DirectionEnum.LEFT;
+					return this.direction = DirectionEnum.DOWN;
+				case DirectionEnum.RIGHT:
+					if (isDownBlank) return this.direction = DirectionEnum.DOWN;
+					if (isUpBlank) return this.direction = DirectionEnum.UP;
+					return this.direction = DirectionEnum.LEFT;
+				case DirectionEnum.DOWN:
+					if (isLeftBlank) return this.direction = DirectionEnum.LEFT;
+					if (isRightBlank) return this.direction = DirectionEnum.RIGHT;
+					return this.direction = DirectionEnum.UP;
+				case DirectionEnum.LEFT:
+					if (isUpBlank) return this.direction = DirectionEnum.UP;
+					if (isDownBlank) return this.direction = DirectionEnum.DOWN;
+					return this.direction = DirectionEnum.RIGHT;
+			}
+		}
+
 		switch (this.direction) {
+			case DirectionEnum.UP:
+				return this.direction = DirectionEnum.DOWN;
 			case DirectionEnum.RIGHT:
-				this.direction = DirectionEnum.LEFT; break;
+				return this.direction = DirectionEnum.LEFT;
+			case DirectionEnum.DOWN:
+				return this.direction = DirectionEnum.UP;
 			case DirectionEnum.LEFT:
-				this.direction = DirectionEnum.RIGHT; break;
+				return this.direction = DirectionEnum.RIGHT;
+			default:
+				return DirectionEnum.RIGHT
 		}
 	}
 
