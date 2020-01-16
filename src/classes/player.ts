@@ -27,6 +27,8 @@ export default class Player implements IPlayer {
 	public y: number;
 	public blockX: number;
 	public blockY: number
+	public startX: number;
+	public startY: number;
 	public width: number;
 	public height: number;
 	public iteration: number;
@@ -61,7 +63,9 @@ export default class Player implements IPlayer {
 		this.x = (this.INITIAL_PLAYER_X - 1 ) * this.PLAYER_WIDTH + 1;
 		this.y = (this.INITIAL_PLAYER_Y - 1 ) * this.PLATER_HEIGHT + 1;
 		this.blockX = this.INITIAL_PLAYER_X;
-		this.blockY = this.INITIAL_PLAYER_Y ;
+		this.blockY = this.INITIAL_PLAYER_Y;
+		this.startX = 0;
+		this.startY = 0;
 		this.width = this.PLAYER_WIDTH;
 		this.height = this.PLATER_HEIGHT;
 		this.zIndex = this.PLAYER_ZINDEX;
@@ -73,9 +77,18 @@ export default class Player implements IPlayer {
 		this.inPipe = false;
 	}
 
-	public setStartPosision = (x: number, y: number): void => {
+	public setStartPosition = (x: number, y: number): void => {
 		this.blockX = x;
 		this.blockY = y;
+		this.startX = x;
+		this.startY = y;
+	}
+
+	public looseLife = (): PlayerResultEnum => {
+		this.lives --;
+		this.resetStartPosition();
+
+		return this.lives < 1 ? PlayerResultEnum.DEAD : PlayerResultEnum.LOOSE_LIFE
 	}
 	
 	public move = (direction: DirectionEnum, board: IBoard): PlayerResultEnum => {
@@ -96,10 +109,11 @@ export default class Player implements IPlayer {
 		}
 
 		const block = board.validate(x, y);
+		let result = PlayerResultEnum.SAFE;
 
 		switch (block) {
 			case SpriteTypeEnum.BLANK:
-				this.inPipe = false; this.showPlayer(); this.movePlayer(x, y); break;
+				return this.moveToBlank(x, y);
 			case SpriteTypeEnum.POINTS:
 				this.addStarPoints(); this.movePlayer(x, y); return PlayerResultEnum.STAR;
 			case SpriteTypeEnum.BOLDER:
@@ -148,9 +162,18 @@ export default class Player implements IPlayer {
 			case SpriteTypeEnum.GREEN_KEY:
 			case SpriteTypeEnum.AXE:
 				this.addInventory(x, y, board, block); break;
+			case SpriteTypeEnum.SKULL:
+				result = this.looseLife(); break;
 		}
 
-		return PlayerResultEnum.SAFE;
+		return result;
+	}
+
+	private moveToBlank = (x: number, y: number): PlayerResultEnum => {
+		this.inPipe = false;
+		this.showPlayer();
+		this.movePlayer(x, y);
+		return PlayerResultEnum.PLAYER_MOVED;
 	}
 
 	private movePlayer = (x: number, y: number): void => {
@@ -250,6 +273,11 @@ export default class Player implements IPlayer {
 		const { xPos, yPos } = board.teleport(x, y, block);
 
 		if (xPos && yPos) this.movePlayer(xPos, yPos);
+	}
+
+	private resetStartPosition = (): void => {
+		this.blockX = this.startX;
+		this.blockY = this.startY;
 	}
 
 	private isVerticalPipe = (x: number, y: number, board: IBoard): boolean => board.isVerticalPipe(x, y);

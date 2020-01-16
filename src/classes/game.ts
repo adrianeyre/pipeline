@@ -13,12 +13,14 @@ export default class Game implements IGame {
 	public board: IBoard;
 	public level: number;
 	public timer: any;
+	public iteration: number;
 	public playerTimeOut: number;
 	public isGameInPlay: boolean;
 	public timerInterval: number;
 
 	readonly DEFAULT_TIMER_INTERVAL: number = 50;
 	readonly PLAYER_TIME_OUT: number = 20;
+	readonly MONSTER_ITERATION: number = 5;
 	
 	constructor(config: IPipelineProps) {
 		this.level = 1;
@@ -26,14 +28,16 @@ export default class Game implements IGame {
 		this.board = new Board({ currentLevel: this.level, playerX: this.player.blockX, playerY: this.player.blockY });
 		this.isGameInPlay = false;
 		this.playerTimeOut = 0;
+		this.iteration = 0;
 		this.timerInterval = this.DEFAULT_TIMER_INTERVAL;
 
-		this.player.setStartPosision(this.board.startX, this.board.startY);
+		this.player.setStartPosition(this.board.startX, this.board.startY);
 	}
 
 	public handleInput = (playerResult: PlayerResultEnum, sprite?: ISprite): void => {
 		switch (playerResult) {
 			case PlayerResultEnum.SAFE:
+			case PlayerResultEnum.PLAYER_MOVED:
 				return;
 			case PlayerResultEnum.STAR:
 				this.board.setBlock(0, this.player.blockX, this.player.blockY); break;
@@ -45,6 +49,10 @@ export default class Game implements IGame {
 				this.movePlayer(DirectionEnum.RIGHT); break;
 			case PlayerResultEnum.ARROW_LEFT:
 				this.movePlayer(DirectionEnum.LEFT); break;
+			case PlayerResultEnum.LOOSE_LIFE:
+				this.looseLife(); break;
+			case PlayerResultEnum.DEAD:
+				this.dead(); break;
 		}
 	}
 
@@ -55,20 +63,37 @@ export default class Game implements IGame {
 			this.player.move(DirectionEnum.STAND, this.board)
 		}
 
-		if (this.player.inPipe) {
-			const result = this.player.move(this.player.direction, this.board);
-			this.board.updateBoard(this.player.blockX, this.player.blockY);
-			this.handleInput(result);
+		if (this.player.inPipe) this.updateBoard(this.player.direction);
+
+		this.iteration ++;
+
+		if (this.iteration >= this.MONSTER_ITERATION) {
+			this.iteration = 0;
+			this.handleInput(this.board.moveMonstersWithTimer(this.player.blockX, this.player.blockY));
 		}
 	}
 
 	private movePlayer = (direction: DirectionEnum): void => {
 		this.playerTimeOut = 0;
 
-		if (!this.player.inPipe) {
-			const result = this.player.move(direction, this.board);
-			this.board.updateBoard(this.player.blockX, this.player.blockY);
-			this.handleInput(result);
-		}
+		if (!this.player.inPipe) this.updateBoard(direction);
+	}
+
+	private updateBoard = (direction: DirectionEnum): void => {
+		const playerResult = this.player.move(direction, this.board);
+		const monsterResult = this.board.moveMonstersWithPlayer(this.player.blockX, this.player.blockY);
+		this.board.updateBoard(this.player.blockX, this.player.blockY);
+		this.handleInput(playerResult);
+		this.handleInput(monsterResult);
+	}
+
+	private looseLife = (): void => {
+		const result = this.player.looseLife();
+		this.board.updateBoard(this.player.blockX, this.player.blockY);
+		if (result === PlayerResultEnum.DEAD) this.dead();
+	}
+
+	private dead = (): void => {
+		this.isGameInPlay = false;
 	}
 }

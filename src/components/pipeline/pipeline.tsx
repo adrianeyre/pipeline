@@ -1,6 +1,7 @@
 import React from 'react';
 import Game from '../../classes/game';
 import ISprite from '../../classes/interfaces/sprite';
+import IMonster from '../../classes/interfaces/monster';
 import IPipelineProps from './interfaces/pipeline-props';
 import IPipelineState from './interfaces/pipeline-state';
 import GameStatusTop from '../game-status-top/game-status-top';
@@ -54,6 +55,8 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 
 			{ this.state.game.isGameInPlay && <div className="play-area">
 				{ this.state.game.board.sprites?.map((sprite: ISprite) => <DrawSprite key={ sprite.key } sprite={ sprite } handleClick={ this.handleClick } height={ this.state.spriteHeight } width={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } />) }
+
+				{ this.state.game.board.monsters?.map((sprite: IMonster) => <DrawSprite key={ sprite.key } sprite={ sprite } handleClick={ this.handleClick } height={ this.state.spriteHeight } width={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } />) }
 
 				{ this.state.game.board.inventory.sprites?.map((sprite: ISprite) => <DrawSprite key={ sprite.key } sprite={ sprite } handleClick={ this.handleClick } height={ this.state.spriteHeight } width={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } />) }
 

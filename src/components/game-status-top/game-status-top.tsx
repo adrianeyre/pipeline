@@ -12,7 +12,7 @@ export default class GameStatusTop extends React.Component<IGameStatusTopProps, 
 	public render() {
 		return <div className="game-status-top">
 			<div className="game-status-left">1-UP <span className="variable-text">{ this.props.score }</span></div>
-			<div className="game-status-right">LIVES { this.props.lives > 0 && range(this.props.lives).map((livesIndex: number) => <img className="player-lives" key={ `lives-image-${ livesIndex }` } src={ lives } alt="lives" />) }</div>
+			<div className="game-status-right">LIVES { this.props.lives > 0 && range(this.props.lives - 1).map((livesIndex: number) => <img className="player-lives" key={ `lives-image-${ livesIndex }` } src={ lives } alt="lives" />) }</div>
 		</div>
 	}
 }

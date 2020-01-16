@@ -3,8 +3,10 @@ import { cloneDeep } from 'lodash';
 import IBoard from './interfaces/board';
 import ISprite from './interfaces/sprite';
 import IInventory from './interfaces/inventory';
+import IMonster from './interfaces/monster';
 import Sprite from './sprite';
 import Inventory from './inventory';
+import Monster from './monster';
 import SpriteTypeEnum from './enums/sprite-type-enum';
 import ImageEnum from './enums/image-enum';
 import StriteTypeEnum from './enums/sprite-type-enum';
@@ -17,6 +19,7 @@ import * as level01 from './data/level01';
 export default class Board implements IBoard {
 	public board: number[][];
 	public sprites: ISprite[];
+	public monsters: IMonster[];
 	public inventory: IInventory;
 	public currentLevel: number;
 	public startX: number;
@@ -32,6 +35,7 @@ export default class Board implements IBoard {
 		this.currentLevel = config.currentLevel
 		this.board = cloneDeep(this.levels[this.currentLevel - 1].default);
 		this.sprites = [];
+		this.monsters = this.getMonsters();
 		this.inventory = new Inventory({
 			spriteBlockWidth: this.SPRITE_BLOCKS_WIDTH,
 			spriteBlockHeight: this.SPRITE_BLOCKS_HEIGHT,
@@ -60,6 +64,8 @@ export default class Board implements IBoard {
 			yPos = this.yStart(playerY);
 			xPos ++;
 		}
+
+		this.moveMonstersWithPlayer(playerX, playerY);
 	}
 
 	public updateBoard = (playerX: number, playerY: number): void => {
@@ -116,6 +122,21 @@ export default class Board implements IBoard {
 		return { xPos: null, yPos: null };
 	}
 
+	public moveMonstersWithPlayer = (playerX: number, playerY: number): PlayerResultEnum => {
+		const results = this.monsters.map((monster: IMonster) => monster.moveMonstersWithPlayer(playerX, playerY));
+		return results.indexOf(PlayerResultEnum.LOOSE_LIFE) > - 1 ? PlayerResultEnum.LOOSE_LIFE : PlayerResultEnum.SAFE;
+	}
+
+	public moveMonstersWithTimer = (playerX: number, playerY: number): PlayerResultEnum => {
+		const results = this.monsters.map((monster: IMonster) => monster.move(this, playerX, playerY));
+		return results.indexOf(PlayerResultEnum.LOOSE_LIFE) > - 1 ? PlayerResultEnum.LOOSE_LIFE : PlayerResultEnum.SAFE;
+	}
+
+	public isVerticalPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.VERTICAL_PIPE;
+	public isHorizontalPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.HORIZONTAL_PIPE
+	public isConnectionPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.CONNECTION_PIPE;
+	public isBlankBlock = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.BLANK;
+
 	private getPlayerStartPosition = (): any => {
 		for (let y = 1; y < this.board.length; y++) {
 			const x = this.board[y].indexOf(-1);
@@ -127,10 +148,29 @@ export default class Board implements IBoard {
 		return { xPos: null, yPos: null };
 	}
 
-	public isVerticalPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.VERTICAL_PIPE;
-	public isHorizontalPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.HORIZONTAL_PIPE
-	public isConnectionPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.CONNECTION_PIPE;
-	public isBlankBlock = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.BLANK;
+	private getMonsters = (): IMonster[] => {
+		const monsters: IMonster[] = [];
+
+		for(let x = 0; x <= this.board.length; x++) {
+			for(let y = 0; y < this.board[0].length; y++) {
+				if (this.board[y][x] === 999) {
+					this.board[y][x] = 0;
+					monsters.push(new Monster({
+						key: `monster-${ monsters.length + 1 }`,
+						visable: true,
+						x: x + 1,
+						y: y + 1,
+						width: 3,
+						height: 3,
+						blocksWidth: this.SPRITE_BLOCKS_WIDTH,
+						blocksHeight: this.SPRITE_BLOCKS_HEIGHT,
+					}));
+				}
+			}
+		}
+
+		return monsters;
+	}
 
 	private updateBlock = (block: number, x: number, y: number): void => {
 		const sprite = this.sprites.find((spr: ISprite) => spr.key === `sprite-${ x }-${ y }`);
