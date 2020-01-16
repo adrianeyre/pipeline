@@ -129,7 +129,7 @@ export default class Board implements IBoard {
 	}
 
 	public moveMonstersWithTimer = (playerX: number, playerY: number): PlayerResultEnum => {
-		const results = this.monsters.map((monster: IMonster) => monster.move(this, playerX, playerY));
+		const results = this.monsters.map((monster: IMonster) => monster.move(this.isBlankBlock, playerX, playerY));
 		return results.indexOf(PlayerResultEnum.LOOSE_LIFE) > - 1 ? PlayerResultEnum.LOOSE_LIFE : PlayerResultEnum.SAFE;
 	}
 

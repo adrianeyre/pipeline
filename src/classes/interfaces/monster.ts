@@ -1,4 +1,3 @@
-import IBoard from '../interfaces/board';
 import DirectionEnum from '../enums/direction-enum';
 import PlayerResultEnum from '../enums/player-result-enum';
 import MonsterTypeEnum from '../enums/monster-type-enum';
@@ -21,6 +20,6 @@ export default interface IMonster {
 	type: MonsterTypeEnum;
 	image: string;
 	isAlive: boolean;
-	move(board: IBoard, playerX: number, playerY: number): PlayerResultEnum;
+	move(isBlankBlock: any, playerX: number, playerY: number): PlayerResultEnum;
 	moveMonstersWithPlayer(playerX: number, playerY: number): PlayerResultEnum;
 }

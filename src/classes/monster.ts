@@ -1,6 +1,5 @@
 import IMonsterProps from './interfaces/monster-props';
 import IMonster from './interfaces/monster';
-import IBoard from './interfaces/board';
 import DirectionEnum from './enums/direction-enum';
 import PlayerResultEnum from './enums/player-result-enum';
 import MonsterTypeEnum from './enums/monster-type-enum';
@@ -55,7 +54,7 @@ export default class Monster implements IMonster {
 		this.isAlive = true;
 	}
 
-	public move = (board: IBoard, playerX: number, playerY: number): PlayerResultEnum => {
+	public move = (isBlankBlock: any, playerX: number, playerY: number): PlayerResultEnum => {
 		let x = this.blockX;
 		let y = this.blockY;
 
@@ -70,15 +69,15 @@ export default class Monster implements IMonster {
 				x--; break;
 		}
 
-		if (board.isBlankBlock(x, y)) {
+		if (isBlankBlock(x, y)) {
 			this.blockX = x;
 			this.blockY = y;
 			this.updateImage();
 			return this.moveMonstersWithPlayer(playerX, playerY);
 		}
 
-		this.changeDirection(board, this.blockX, this.blockY);
-		return this.move(board, playerX, playerY);
+		this.changeDirection(isBlankBlock, this.blockX, this.blockY);
+		return this.move(isBlankBlock, playerX, playerY);
 	}
 
 	public moveMonstersWithPlayer = (playerX: number, playerY: number): PlayerResultEnum => {
@@ -103,12 +102,12 @@ export default class Monster implements IMonster {
 		return playerX === this.blockX && playerY === this.blockY ? PlayerResultEnum.LOOSE_LIFE : PlayerResultEnum.SAFE;
 	}
 
-	private changeDirection = (board: IBoard, x: number, y: number): DirectionEnum => {
+	private changeDirection = (isBlankBlock: any, x: number, y: number): DirectionEnum => {
 		if (this.type === MonsterTypeEnum.DIRECTIONAL) {
-			const isUpBlank = board.isBlankBlock(x, y - 1);
-			const isRightBlank = board.isBlankBlock(x + 1, y);
-			const isDownBlank = board.isBlankBlock(x, y + 1);
-			const isLeftBlank = board.isBlankBlock(x - 1, y);
+			const isUpBlank = isBlankBlock(x, y - 1);
+			const isRightBlank = isBlankBlock(x + 1, y);
+			const isDownBlank = isBlankBlock(x, y + 1);
+			const isLeftBlank = isBlankBlock(x - 1, y);
 
 			switch (this.direction) {
 				case DirectionEnum.UP:
