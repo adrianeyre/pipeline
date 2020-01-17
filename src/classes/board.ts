@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+// import { cloneDeep } from 'lodash';
 
 import IBoard from './interfaces/board';
 import ISprite from './interfaces/sprite';
@@ -14,8 +14,8 @@ import PlayerResultEnum from './enums/player-result-enum';
 import DirectionEnum from './enums/direction-enum';
 import MonsterTypeEnum from './enums/monster-type-enum';
 import IBoardProps from './interfaces/board-props';
-
-import * as level01 from './data/level01';
+import IFileService from '../services/interfaces/file-service';
+import FileService from '../services/file-service';
 
 export default class Board implements IBoard {
 	public board: number[][];
@@ -25,16 +25,19 @@ export default class Board implements IBoard {
 	public currentLevel: number;
 	public startX: number;
 	public startY: number;
+	public fileService: IFileService;
 
 	readonly SPRITE_BLOCKS_WIDTH: number = 12;
 	readonly SPRITE_BLOCKS_HEIGHT: number = 12;
 	readonly SPRITE_WIDTH: number = 3;
 	readonly SPRITE_HEIGHT: number = 3;
-	readonly levels = [level01];
 
 	constructor(config: IBoardProps) {
+		this.fileService = new FileService();
 		this.currentLevel = config.currentLevel
-		this.board = cloneDeep(this.levels[this.currentLevel - 1].default);
+		this.board = [[]]
+		this.startX = config.playerX;
+		this.startY = config.playerY;
 		this.sprites = [];
 		this.monsters = this.getMonsters();
 		this.inventory = new Inventory({
@@ -44,12 +47,7 @@ export default class Board implements IBoard {
 			spriteHeight: this.SPRITE_HEIGHT,
 		});
 
-		const { xPos, yPos } = this.getPlayerStartPosition();
-		this.startX = xPos ?? config.playerX;
-		this.startY = yPos ?? config.playerY;
-		if (xPos && yPos) this.board[yPos-1][xPos-1] = 0;
-
-		this.setBoard(this.startX, this.startY);
+		this.getBoard();
 	}
 
 	public setBoard = (playerX: number, playerY: number): void => {
@@ -211,6 +209,17 @@ export default class Board implements IBoard {
 
 	private xStart = (playerX: number): number => playerX - Math.floor(this.SPRITE_BLOCKS_WIDTH / 2) - 1;
 	private yStart = (playerY: number): number => playerY - Math.floor(this.SPRITE_BLOCKS_HEIGHT / 2) - 1;
+
+	private getBoard = async () => {
+		this.board = await this.fileService.readFile(this.currentLevel);
+
+		const { xPos, yPos } = this.getPlayerStartPosition();
+		this.startX = xPos ?? this.startX;
+		this.startY = yPos ?? this.startY;
+		if (xPos && yPos) this.board[yPos-1][xPos-1] = 0;
+
+		this.setBoard(this.startX, this.startY);
+	}
 
 	private newBlock = (x: number, y: number, width: number, height: number, block: number): ISprite => {
 		const type: string = SpriteTypeEnum[block];

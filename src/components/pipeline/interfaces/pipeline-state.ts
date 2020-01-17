@@ -8,4 +8,5 @@ export default interface IAntRunState {
 	containerHeight: number;
 	timer?: any;
 	timerInterval: number;
+	showBoardMap: boolean;
 }

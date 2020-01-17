@@ -5,6 +5,7 @@ import StriteTypeEnum from '../enums/sprite-type-enum';
 import PlayerResultEnum from '../enums/player-result-enum';
 import DirectionEnum from '../enums/direction-enum';
 import SpriteTypeEnum from '../enums/sprite-type-enum';
+import IFileService from '../../services/interfaces/file-service';
 
 export default interface IBoard {
 	board: number[][];
@@ -13,6 +14,7 @@ export default interface IBoard {
 	inventory: IInventory;
 	startX: number;
 	startY: number;
+	fileService: IFileService;
 	setBoard(playerX: number, playerY: number): void;
 	updateBoard(playerX: number, playerY: number): void;
 	validate(x: number, y: number): StriteTypeEnum;
