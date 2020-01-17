@@ -23,6 +23,38 @@ export default class InfoBoard extends React.Component<IInfoBoardProps, {}> {
 			<div className="info-board-instructions">
 				<p>This is a remake of two of my favourite games for the <a href="https://en.wikipedia.org/wiki/BBC_Micro" target="_blank" rel="noopener noreferrer"> BBC Micro</a>, <a href="https://en.wikipedia.org/wiki/Repton_(video_game)" target="_blank" rel="noopener noreferrer">Repton</a> and <a href="https://en.wikipedia.org/wiki/Pipeline_(video_game)" target="_blank" rel="noopener noreferrer">Pipeline</a>.</p>
 				<p>You have to navigate Repton around the playing field collecting all of the stars. There are plenty of puzzles to solve including gates, keys, boulders and teleports</p>
+				<table>
+					<tbody>
+						<tr>
+							<td className="title">Function</td>
+							<td className="title">Key</td>
+						</tr>
+						<tr>
+							<td>Move Up</td>
+							<td>Arrow Up</td>
+						</tr>
+						<tr>
+							<td>Move Up</td>
+							<td>Arrow Up</td>
+						</tr>
+						<tr>
+							<td>Move Left</td>
+							<td>Arrow Left</td>
+						</tr>
+						<tr>
+							<td>Move Right</td>
+							<td>Arrow Right</td>
+						</tr>
+						<tr>
+							<td>Inventory Swap</td>
+							<td>Spacebar</td>
+						</tr>
+						<tr>
+							<td>Inventory Drop</td>
+							<td>Enter</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
 
 			<div className="button-area">
