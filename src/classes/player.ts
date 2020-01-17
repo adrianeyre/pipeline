@@ -91,7 +91,7 @@ export default class Player implements IPlayer {
 		return this.lives < 1 ? PlayerResultEnum.DEAD : PlayerResultEnum.LOOSE_LIFE
 	}
 	
-	public move = (direction: DirectionEnum, board: IBoard): PlayerResultEnum => {
+	public move = (direction: DirectionEnum, board: IBoard, editing: boolean): PlayerResultEnum => {
 		this.direction = direction;
 
 		let x = this.blockX;
@@ -106,6 +106,11 @@ export default class Player implements IPlayer {
 				y ++; break;
 			case DirectionEnum.LEFT:
 				x --; break;
+		}
+
+		if (editing) {
+			this.movePlayer(x, y);
+			return PlayerResultEnum.SAFE;
 		}
 
 		const block = board.validate(x, y);
@@ -264,7 +269,7 @@ export default class Player implements IPlayer {
 				}
 			}
 
-			this.move(direction, board);
+			this.move(direction, board, false);
 		}
 	}
 

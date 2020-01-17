@@ -13,6 +13,7 @@ export default interface IGame {
 	playerTimeOut: number;
 	isGameInPlay: boolean;
 	timerInterval: number;
+	editing: boolean;
 	handleInput(playerResult: PlayerResultEnum, sprite?: ISprite): void;
 	handleTimer(): void;
 }

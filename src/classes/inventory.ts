@@ -104,6 +104,8 @@ export default class Inventory implements IInventory {
 			y: 0,
 			width,
 			height,
+			blockX: 0,
+			blockY: 0,
 			image: ImageEnum[this.spriteName(block)],
 			type: SpriteTypeEnum[type],
 			outline,

@@ -6,6 +6,8 @@ export default interface ISpriteProps {
 	visable: boolean;
 	x: number;
 	y: number;
+	blockX: number;
+	blockY: number;
 	width: number;
 	height: number;
 	image: ImageEnum;

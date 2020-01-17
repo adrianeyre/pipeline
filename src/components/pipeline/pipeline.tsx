@@ -50,21 +50,27 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 	public render() {
 		return <div className="pipeline-play-container" ref={(d) => { this.container = d }} style={ this.styleContainer() }>
 			{ !this.state.showBoardMap && <div>
-				<div style={ this.styleStatusTop() }><GameStatusTop score={ this.state.game.player.score } lives={ this.state.game.player.lives } /></div>
+				{ !this.state.game.editing && <div>
+					<div style={ this.styleStatusTop() }><GameStatusTop score={ this.state.game.player.score } lives={ this.state.game.player.lives } /></div>
+				</div> }
 
 				{ !this.state.game.isGameInPlay && <div style={ this.styleInfoBoard() }>
 					<InfoBoard gameOver={ this.state.game.player.lives < 1 } startGame={ this.startGame } score={ this.state.game.player.score } containerHeight={ this.state.containerHeight } />
 				</div> }
 
 				{ this.state.game.isGameInPlay && <div className="play-area">
-					{ this.state.game.board.sprites?.map((sprite: ISprite) => <DrawSprite key={ sprite.key } sprite={ sprite } handleClick={ this.handleClick } height={ this.state.spriteHeight } width={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } />) }
+					{ this.state.game.board.sprites?.map((sprite: ISprite) => <DrawSprite key={ sprite.key } sprite={ sprite } handleClick={ this.handleSpriteClick } height={ this.state.spriteHeight } width={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } />) }
 
-					{ this.state.game.board.monsters?.map((sprite: IMonster) => <DrawSprite key={ sprite.key } sprite={ sprite } handleClick={ this.handleClick } height={ this.state.spriteHeight } width={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } />) }
+					{ !this.state.game.editing && <div>
+						{ this.state.game.board.monsters?.map((sprite: IMonster) => <DrawSprite key={ sprite.key } sprite={ sprite } handleClick={ this.handleClick } height={ this.state.spriteHeight } width={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } />) }
 
-					<DrawSprite sprite={ this.state.game.player } handleClick={ this.handleClickPlayer }height={ this.state.spriteHeight } width={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } />
+						<DrawSprite sprite={ this.state.game.player } handleClick={ this.handleClickPlayer }height={ this.state.spriteHeight } width={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } />
+					</div> }
 				</div> }
 
-				<div style={ this.styleStatusBottom() }><GameStatusBottom sprites={ this.state.game.board.inventory.sprites } handleClick={ this.handleClick } spriteHeight={ this.state.spriteHeight } spriteWidth={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } /></div>
+				{ !this.state.game.editing && <div>
+					<div style={ this.styleStatusBottom() }><GameStatusBottom sprites={ this.state.game.board.inventory.sprites } handleClick={ this.handleClick } spriteHeight={ this.state.spriteHeight } spriteWidth={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } /></div>
+				</div> }
 
 				{ this.state.game.isGameInPlay && this.state.containerWidth < 600 && <div style={ this.styleGameButtons() }><MobileButtons handleMobileButton={ this.handleMobileButton }/></div> }
 			</div> }
@@ -173,6 +179,10 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 	}
 
 	private handleMobileButton = async (direction: PlayerResultEnum): Promise<void> => await this.handleInput(direction);
+
+	private handleSpriteClick = async (sprite: ISprite) => {
+		this.state.game.handleInput(PlayerResultEnum.EDIT_SPRITE, sprite);
+	}
 
 	private handleClick = async (sprite: ISprite) => {
 		

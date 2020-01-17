@@ -7,6 +7,8 @@ export default interface ISprite {
 	outline: boolean;
 	x: number;
 	y: number;
+	blockX: number;
+	blockY: number;
 	width: number;
 	height: number;
 	zIndex: number

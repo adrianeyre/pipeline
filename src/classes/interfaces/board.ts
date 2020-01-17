@@ -25,4 +25,5 @@ export default interface IBoard {
 	teleport(x: number, y: number, block: SpriteTypeEnum): any;
 	isMyBlock(x: number, y: number, type: SpriteTypeEnum): boolean;
 	dropItem(type: SpriteTypeEnum, playerX: number, playerY: number, direction: DirectionEnum): boolean;
+	readLevel(): Promise<void>;
 }

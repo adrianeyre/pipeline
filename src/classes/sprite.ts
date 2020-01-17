@@ -47,6 +47,7 @@ import sprite40 from '../images/sprite40.png';
 import sprite41 from '../images/sprite41.png';
 import sprite42 from '../images/sprite42.png';
 import sprite43 from '../images/sprite43.png';
+import monster from '../images/monster01.png';
 import player from '../images/player.png';
 
 export default class Sprite implements ISprite {
@@ -55,6 +56,8 @@ export default class Sprite implements ISprite {
 	public outline: boolean;
 	public x: number;
 	public y: number;
+	public blockX: number;
+	public blockY: number;
 	public width: number;
 	public height: number;
 	public zIndex: number;
@@ -71,7 +74,7 @@ export default class Sprite implements ISprite {
 		sprite30, sprite31, sprite32, sprite33, sprite34, sprite35,
 		sprite36, sprite37, sprite38, sprite39, sprite40, sprite41,
 		sprite42, sprite43,
-		player,
+		monster, player,
 	}
 
 	constructor(config: ISpriteProps) {
@@ -80,6 +83,8 @@ export default class Sprite implements ISprite {
 		this.outline = config.outline;
 		this.x = config.x;
 		this.y = config.y;
+		this.blockX = config.blockX;
+		this.blockY = config.blockY;
 		this.width = config.width;
 		this.height = config.height;
 		this.zIndex = this.Z_INDEX;

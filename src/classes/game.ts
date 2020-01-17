@@ -17,6 +17,7 @@ export default class Game implements IGame {
 	public playerTimeOut: number;
 	public isGameInPlay: boolean;
 	public timerInterval: number;
+	public editing: boolean;
 
 	readonly DEFAULT_TIMER_INTERVAL: number = 50;
 	readonly PLAYER_TIME_OUT: number = 20;
@@ -30,6 +31,7 @@ export default class Game implements IGame {
 		this.playerTimeOut = 0;
 		this.iteration = 0;
 		this.timerInterval = this.DEFAULT_TIMER_INTERVAL;
+		this.editing = false;
 
 		this.player.setStartPosition(this.board.startX, this.board.startY);
 	}
@@ -57,14 +59,20 @@ export default class Game implements IGame {
 				this.looseLife(); break;
 			case PlayerResultEnum.DEAD:
 				this.dead(); break;
+			case PlayerResultEnum.EDITING:
+				this.toggleEditing(); break
+			case PlayerResultEnum.EDIT_SPRITE:
+				this.editSprite(sprite); break
 		}
 	}
 
 	public handleTimer = (): void => {
+		if (this.editing) return;
+
 		this.playerTimeOut ++;
 		if (!this.player.inPipe && this.playerTimeOut >= this.PLAYER_TIME_OUT) {
 			this.playerTimeOut = 0;
-			this.player.move(DirectionEnum.STAND, this.board)
+			this.player.move(DirectionEnum.STAND, this.board, this.editing)
 		}
 
 		if (this.player.inPipe) this.updateBoard(this.player.direction);
@@ -84,7 +92,13 @@ export default class Game implements IGame {
 	}
 
 	private updateBoard = (direction: DirectionEnum): void => {
-		const playerResult = this.player.move(direction, this.board);
+		if (this.editing) {
+			this.player.move(direction, this.board, this.editing);
+			this.board.updateBoard(this.player.blockX, this.player.blockY);
+			return;
+		}
+
+		const playerResult = this.player.move(direction, this.board, this.editing);
 		const monsterResult = this.board.moveMonstersWithPlayer(this.player.blockX, this.player.blockY);
 		this.board.updateBoard(this.player.blockX, this.player.blockY);
 		this.handleInput(playerResult);
@@ -108,5 +122,21 @@ export default class Game implements IGame {
 			const hasDropped = this.board.dropItem(item, this.player.blockX, this.player.blockY, this.player.direction);
 			if (hasDropped) this.board.inventory.remove(item);
 		}
+	}
+
+	private toggleEditing = async (): Promise<void> => {
+		this.editing = !this.editing;
+
+		if (this.editing) {
+			await this.board.readLevel();
+			this.board.updateBoard(this.player.blockX, this.player.blockY);
+		}
+	}
+
+	private editSprite = (sprite?: ISprite) => {
+		if (!sprite || !this.editing) return;
+
+		this.board.setBlock(99, sprite.blockX, sprite.blockY);
+		this.board.updateBoard(this.player.blockX, this.player.blockY);
 	}
 }

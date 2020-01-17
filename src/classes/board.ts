@@ -39,7 +39,7 @@ export default class Board implements IBoard {
 		this.startX = config.playerX;
 		this.startY = config.playerY;
 		this.sprites = [];
-		this.monsters = this.getMonsters();
+		this.monsters = [];
 		this.inventory = new Inventory({
 			spriteBlockWidth: this.SPRITE_BLOCKS_WIDTH,
 			spriteBlockHeight: this.SPRITE_BLOCKS_HEIGHT,
@@ -57,7 +57,7 @@ export default class Board implements IBoard {
 
 		for (let x = 1; x <= this.SPRITE_BLOCKS_WIDTH; x++) {
 			for(let y = 1; y <= this.SPRITE_BLOCKS_HEIGHT; y++) {
-				this.sprites.push(this.newBlock(x, y, this.SPRITE_WIDTH, this.SPRITE_HEIGHT, this.board[yPos][xPos]));
+				this.sprites.push(this.newBlock(x, y, xPos, yPos, this.SPRITE_WIDTH, this.SPRITE_HEIGHT, this.board[yPos][xPos]));
 				yPos ++;
 			}
 			yPos = this.yStart(playerY);
@@ -73,7 +73,7 @@ export default class Board implements IBoard {
 
 		for(let x = 1; x <= this.SPRITE_BLOCKS_WIDTH; x++) {
 			for(let y = 1; y <= this.SPRITE_BLOCKS_HEIGHT; y++) {
-				this.updateBlock(this.board[yPos][xPos], x, y);
+				this.updateBlock(this.board[yPos][xPos], x, y, xPos, yPos);
 				yPos ++;
 			}
 			yPos = this.yStart(playerY);
@@ -102,8 +102,8 @@ export default class Board implements IBoard {
 		if (this.board[yPos-1][xPos-1] === 0) {
 			this.setBlock(0, x, y)
 			this.setBlock(3, xPos, yPos)
-			this.updateBlock(0, x, y);
-			this.updateBlock(3, xPos, yPos);
+			this.updateBlock(0, x, y, xPos, yPos);
+			this.updateBlock(3, xPos, yPos, xPos, yPos);
 			return PlayerResultEnum.BOLDER_MOVED;
 		}
 
@@ -157,6 +157,10 @@ export default class Board implements IBoard {
 
 	public isMyBlock = (x: number, y: number, type: SpriteTypeEnum): boolean => this.board[y-1][x-1] === type;
 
+	public readLevel = async (): Promise<void> => {
+		this.board = await this.fileService.readFile(this.currentLevel);
+	}
+
 	private getPlayerStartPosition = (): any => {
 		for (let y = 1; y < this.board.length; y++) {
 			const x = this.board[y].indexOf(-1);
@@ -174,10 +178,10 @@ export default class Board implements IBoard {
 		for(let x = 0; x <= this.board.length; x++) {
 			for(let y = 0; y < this.board[0].length; y++) {
 				const block = this.board[y][x];
-				if (block >= 997 && block <= 999) {
+				if (block >= 97 && block <= 99) {
 					this.board[y][x] = 0;
 					const type: string = MonsterTypeEnum[block];
-					const direction: string = DirectionEnum[block - 996];
+					const direction: string = DirectionEnum[block - 96];
 
 					monsters.push(new Monster({
 						key: `monster-${ monsters.length + 1 }`,
@@ -198,20 +202,22 @@ export default class Board implements IBoard {
 		return monsters;
 	}
 
-	private updateBlock = (block: number, x: number, y: number): void => {
+	private updateBlock = (block: number, x: number, y: number, blockX: number, blockY: number): void => {
 		const sprite = this.sprites.find((spr: ISprite) => spr.key === `sprite-${ x }-${ y }`);
 		if (!sprite) return;
 
 		const type: string = SpriteTypeEnum[block];
 		sprite.updateImage(ImageEnum[this.spriteName(block)]);
 		sprite.updateType(SpriteTypeEnum[type]);
+		sprite.blockX = blockX + 1;
+		sprite.blockY = blockY + 1;
 	}
 
 	private xStart = (playerX: number): number => playerX - Math.floor(this.SPRITE_BLOCKS_WIDTH / 2) - 1;
 	private yStart = (playerY: number): number => playerY - Math.floor(this.SPRITE_BLOCKS_HEIGHT / 2) - 1;
 
 	private getBoard = async () => {
-		this.board = await this.fileService.readFile(this.currentLevel);
+		await this.readLevel();
 
 		const { xPos, yPos } = this.getPlayerStartPosition();
 		this.startX = xPos ?? this.startX;
@@ -219,9 +225,10 @@ export default class Board implements IBoard {
 		if (xPos && yPos) this.board[yPos-1][xPos-1] = 0;
 
 		this.setBoard(this.startX, this.startY);
+		this.monsters = this.getMonsters();
 	}
 
-	private newBlock = (x: number, y: number, width: number, height: number, block: number): ISprite => {
+	private newBlock = (x: number, y: number, blockX: number, blockY: number, width: number, height: number, block: number): ISprite => {
 		const type: string = SpriteTypeEnum[block];
 
 		return new Sprite({
@@ -229,6 +236,8 @@ export default class Board implements IBoard {
 			visable: true,
 			x: (x - 1) * width + 1,
 			y: (y - 1) * height + 1,
+			blockX: blockX + 1,
+			blockY: blockY + 1,
 			width,
 			height,
 			image: ImageEnum[this.spriteName(block)],

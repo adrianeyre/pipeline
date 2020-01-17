@@ -24,5 +24,5 @@ export default interface IPlayer {
 	inPipe: boolean;
 	setStartPosition(x: number, y: number): void;
 	looseLife(): PlayerResultEnum;
-	move(direction: DirectionEnum, board: IBoard): PlayerResultEnum;
+	move(direction: DirectionEnum, board: IBoard, editing: boolean): PlayerResultEnum;
 }
