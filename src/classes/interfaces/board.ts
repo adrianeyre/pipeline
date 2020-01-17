@@ -21,8 +21,6 @@ export default interface IBoard {
 	moveMonstersWithPlayer(playerX: number, playerY: number): PlayerResultEnum;
 	moveMonstersWithTimer(playerX: number, playerY: number): PlayerResultEnum;
 	teleport(x: number, y: number, block: SpriteTypeEnum): any;
-	isVerticalPipe(x: number, y: number): boolean;
-	isHorizontalPipe(x: number, y: number): boolean;
-	isConnectionPipe(x: number, y: number): boolean;
-	isBlankBlock(x: number, y: number): boolean;
+	isMyBlock(x: number, y: number, type: SpriteTypeEnum): boolean;
+	dropItem(type: SpriteTypeEnum, playerX: number, playerY: number, direction: DirectionEnum): boolean;
 }

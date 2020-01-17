@@ -3,4 +3,5 @@ export default interface IInventoryProps {
 	spriteBlockHeight: number;
 	spriteWidth: number;
 	spriteHeight: number;
+	maxItems?: number;
 }

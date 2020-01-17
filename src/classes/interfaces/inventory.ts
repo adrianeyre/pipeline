@@ -9,6 +9,11 @@ export default interface IInventory {
 	spriteHeight: number;
 	sprites: ISprite[];
 	count: number;
+	slot: number;
+	maxItems: number;
 	addItem(block: SpriteTypeEnum): PlayerResultEnum;
 	useItem(block: SpriteTypeEnum): PlayerResultEnum;
+	moveSlot(): void;
+	drop(): SpriteTypeEnum | null;
+	remove(type: SpriteTypeEnum): void;
 }

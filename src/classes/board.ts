@@ -129,14 +129,35 @@ export default class Board implements IBoard {
 	}
 
 	public moveMonstersWithTimer = (playerX: number, playerY: number): PlayerResultEnum => {
-		const results = this.monsters.map((monster: IMonster) => monster.move(this.isBlankBlock, playerX, playerY));
+		const results = this.monsters.map((monster: IMonster) => monster.move(this.isMyBlock, playerX, playerY));
 		return results.indexOf(PlayerResultEnum.LOOSE_LIFE) > - 1 ? PlayerResultEnum.LOOSE_LIFE : PlayerResultEnum.SAFE;
 	}
 
-	public isVerticalPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.VERTICAL_PIPE;
-	public isHorizontalPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.HORIZONTAL_PIPE
-	public isConnectionPipe = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.CONNECTION_PIPE;
-	public isBlankBlock = (x: number, y: number): boolean => this.board[y-1][x-1] === SpriteTypeEnum.BLANK;
+	public dropItem = (type: SpriteTypeEnum, playerX: number, playerY: number, direction: DirectionEnum): boolean => {
+		let x = playerX,
+			y = playerY;
+
+		switch (direction) {
+			case DirectionEnum.UP:
+				y--; break;
+			case DirectionEnum.RIGHT:
+				x++; break;
+			case DirectionEnum.DOWN:
+				y++; break;
+			case DirectionEnum.LEFT:
+				x--; break;
+		}
+
+		if (this.isMyBlock(x, y, SpriteTypeEnum.BLANK)) {
+			this.setBlock(type, x, y);
+			this.updateBoard(playerX, playerY);
+			return true
+		}
+
+		return false;
+	}
+
+	public isMyBlock = (x: number, y: number, type: SpriteTypeEnum): boolean => this.board[y-1][x-1] === type;
 
 	private getPlayerStartPosition = (): any => {
 		for (let y = 1; y < this.board.length; y++) {
@@ -183,8 +204,9 @@ export default class Board implements IBoard {
 		const sprite = this.sprites.find((spr: ISprite) => spr.key === `sprite-${ x }-${ y }`);
 		if (!sprite) return;
 
+		const type: string = SpriteTypeEnum[block];
 		sprite.updateImage(ImageEnum[this.spriteName(block)]);
-		sprite.updateType(SpriteTypeEnum[this.spriteName(block)]);
+		sprite.updateType(SpriteTypeEnum[type]);
 	}
 
 	private xStart = (playerX: number): number => playerX - Math.floor(this.SPRITE_BLOCKS_WIDTH / 2) - 1;

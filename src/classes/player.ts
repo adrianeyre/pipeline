@@ -280,9 +280,9 @@ export default class Player implements IPlayer {
 		this.blockY = this.startY;
 	}
 
-	private isVerticalPipe = (x: number, y: number, board: IBoard): boolean => board.isVerticalPipe(x, y);
-	private isHorizontalPipe = (x: number, y: number, board: IBoard): boolean => board.isHorizontalPipe(x, y);
-	private isConnectionPipe = (x: number, y: number, board: IBoard): boolean => board.isConnectionPipe(x, y);
+	private isVerticalPipe = (x: number, y: number, board: IBoard): boolean => board.isMyBlock(x, y, SpriteTypeEnum.VERTICAL_PIPE);
+	private isHorizontalPipe = (x: number, y: number, board: IBoard): boolean => board.isMyBlock(x, y, SpriteTypeEnum.HORIZONTAL_PIPE);
+	private isConnectionPipe = (x: number, y: number, board: IBoard): boolean => board.isMyBlock(x, y, SpriteTypeEnum.CONNECTION_PIPE);
 	private hidePlayer = (): boolean => this.visable = false;
 	private showPlayer = (): boolean => this.visable = true;
 	private addStarPoints = () => this.score += this.STAR_POINTS;

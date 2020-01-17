@@ -2,13 +2,14 @@ import React from 'react';
 import Game from '../../classes/game';
 import ISprite from '../../classes/interfaces/sprite';
 import IMonster from '../../classes/interfaces/monster';
+import PlayerResultEnum from '../../classes/enums/player-result-enum';
 import IPipelineProps from './interfaces/pipeline-props';
 import IPipelineState from './interfaces/pipeline-state';
 import GameStatusTop from '../game-status-top/game-status-top';
+import GameStatusBottom from '../game-status-bottom/game-status-bottom';
 import DrawSprite from '../draw-sprite/draw-sprite';
 import InfoBoard from '../info-board/info-board';
 import MobileButtons from '../mobile-buttons/mobile-buttons';
-import PlayerResultEnum from 'classes/enums/player-result-enum';
 
 import './styles/pipeline.scss';
 
@@ -58,10 +59,10 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 
 				{ this.state.game.board.monsters?.map((sprite: IMonster) => <DrawSprite key={ sprite.key } sprite={ sprite } handleClick={ this.handleClick } height={ this.state.spriteHeight } width={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } />) }
 
-				{ this.state.game.board.inventory.sprites?.map((sprite: ISprite) => <DrawSprite key={ sprite.key } sprite={ sprite } handleClick={ this.handleClick } height={ this.state.spriteHeight } width={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } />) }
-
 				<DrawSprite sprite={ this.state.game.player } handleClick={ this.handleClickPlayer }height={ this.state.spriteHeight } width={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } />
 			</div> }
+
+			<div style={ this.styleStatusBottom() }><GameStatusBottom sprites={ this.state.game.board.inventory.sprites } handleClick={ this.handleClick } spriteHeight={ this.state.spriteHeight } spriteWidth={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } /></div>
 
 			{ this.state.game.isGameInPlay && this.state.containerWidth < 600 && <div style={ this.styleGameButtons() }><MobileButtons handleMobileButton={ this.handleMobileButton }/></div> }
 		</div>
@@ -81,6 +82,13 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 		position: 'absolute' as 'absolute',
 		width: `100%`,
 		maxWidth: `${ this.state.containerHeight }px`,
+	})
+
+	private styleStatusBottom = () => ({
+		position: 'absolute' as 'absolute',
+		width: `100%`,
+		maxWidth: `${ this.state.containerHeight }px`,
+		top: `${ this.state.containerWidth / 100 * 94.375 }px`,
 	})
 
 	private styleGameButtons = () => ({

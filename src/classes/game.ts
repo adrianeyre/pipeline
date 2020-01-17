@@ -49,6 +49,10 @@ export default class Game implements IGame {
 				this.movePlayer(DirectionEnum.RIGHT); break;
 			case PlayerResultEnum.ARROW_LEFT:
 				this.movePlayer(DirectionEnum.LEFT); break;
+			case PlayerResultEnum.SPACE_BAR:
+				this.board.inventory.moveSlot(); break;
+			case PlayerResultEnum.ENTER:
+				this.dropItem(); break;
 			case PlayerResultEnum.LOOSE_LIFE:
 				this.looseLife(); break;
 			case PlayerResultEnum.DEAD:
@@ -95,5 +99,14 @@ export default class Game implements IGame {
 
 	private dead = (): void => {
 		this.isGameInPlay = false;
+	}
+
+	private dropItem = (): void => {
+		const item = this.board.inventory.drop();
+
+		if (item) {
+			const hasDropped = this.board.dropItem(item, this.player.blockX, this.player.blockY, this.player.direction);
+			if (hasDropped) this.board.inventory.remove(item);
+		}
 	}
 }

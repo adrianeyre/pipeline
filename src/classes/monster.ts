@@ -3,6 +3,7 @@ import IMonster from './interfaces/monster';
 import DirectionEnum from './enums/direction-enum';
 import PlayerResultEnum from './enums/player-result-enum';
 import MonsterTypeEnum from './enums/monster-type-enum';
+import SpriteTypeEnum from './enums/sprite-type-enum';
 
 import monster01 from '../images/monster01.png';
 import monster02 from '../images/monster02.png';
@@ -54,7 +55,7 @@ export default class Monster implements IMonster {
 		this.isAlive = true;
 	}
 
-	public move = (isBlankBlock: any, playerX: number, playerY: number): PlayerResultEnum => {
+	public move = (isMyBlock: any, playerX: number, playerY: number): PlayerResultEnum => {
 		let x = this.blockX;
 		let y = this.blockY;
 
@@ -69,15 +70,15 @@ export default class Monster implements IMonster {
 				x--; break;
 		}
 
-		if (isBlankBlock(x, y)) {
+		if (isMyBlock(x, y, SpriteTypeEnum.BLANK)) {
 			this.blockX = x;
 			this.blockY = y;
 			this.updateImage();
 			return this.moveMonstersWithPlayer(playerX, playerY);
 		}
 
-		this.changeDirection(isBlankBlock, this.blockX, this.blockY);
-		return this.move(isBlankBlock, playerX, playerY);
+		this.changeDirection(isMyBlock, this.blockX, this.blockY);
+		return this.move(isMyBlock, playerX, playerY);
 	}
 
 	public moveMonstersWithPlayer = (playerX: number, playerY: number): PlayerResultEnum => {
@@ -102,12 +103,12 @@ export default class Monster implements IMonster {
 		return playerX === this.blockX && playerY === this.blockY ? PlayerResultEnum.LOOSE_LIFE : PlayerResultEnum.SAFE;
 	}
 
-	private changeDirection = (isBlankBlock: any, x: number, y: number): DirectionEnum => {
+	private changeDirection = (isMyBlock: any, x: number, y: number): DirectionEnum => {
 		if (this.type === MonsterTypeEnum.DIRECTIONAL) {
-			const isUpBlank = isBlankBlock(x, y - 1);
-			const isRightBlank = isBlankBlock(x + 1, y);
-			const isDownBlank = isBlankBlock(x, y + 1);
-			const isLeftBlank = isBlankBlock(x - 1, y);
+			const isUpBlank = isMyBlock(x, y - 1, SpriteTypeEnum.BLANK);
+			const isRightBlank = isMyBlock(x + 1, y, SpriteTypeEnum.BLANK);
+			const isDownBlank = isMyBlock(x, y + 1, SpriteTypeEnum.BLANK);
+			const isLeftBlank = isMyBlock(x - 1, y, SpriteTypeEnum.BLANK);
 
 			switch (this.direction) {
 				case DirectionEnum.UP:

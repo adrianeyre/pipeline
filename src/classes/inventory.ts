@@ -13,11 +13,14 @@ export default class Inventory implements IInventory {
 	public spriteHeight: number;
 	public sprites: ISprite[];
 	public count: number;
+	public slot: number;
+	public maxItems: number;
 
 	readonly WIDTH: number = 1;
 	readonly HEIGHT: number = 1
+	readonly X_OFFSET: number = 8;
 	readonly BLANK: number = 0;
-	readonly MAX_ITEMS: number = 18;
+	readonly MAX_ITEMS: number = 3;
 
 	constructor(config: IInventoryProps) {
 		this.spriteBlockWidth = config.spriteBlockWidth;
@@ -26,16 +29,16 @@ export default class Inventory implements IInventory {
 		this.spriteHeight = config.spriteHeight;
 		this.sprites = [];
 		this.count = 0;
+		this.slot = 1;
+		this.maxItems = config.maxItems ? config.maxItems : this.MAX_ITEMS;
 
 		this.setupInventory();
+		this.setSlot(ImageEnum.PLAYER);
 	}
 
 	public addItem = (block: SpriteTypeEnum): PlayerResultEnum => {
-		if (this.count >= this.MAX_ITEMS) return PlayerResultEnum.INVENTORY_FULL;
-
-		this.count++;
-		const sprite = this.sprites.find((spr: ISprite) => spr.key === `inventory-${ this.count }`);
-		if (!sprite) throw new Error('Inventory sprite not found!');
+		const sprite = this.sprites.find((spr: ISprite) => spr.key.substring(0, 10) === `inventory-` && spr.type === SpriteTypeEnum.BLANK);
+		if (!sprite) return PlayerResultEnum.INVENTORY_FULL;
 
 		sprite.updateType(block);
 		sprite.updateImage(ImageEnum[this.spriteName(block)]);
@@ -44,44 +47,66 @@ export default class Inventory implements IInventory {
 	}
 
 	public useItem = (block: SpriteTypeEnum): PlayerResultEnum => {
-		const sprite = this.sprites.find((spr: ISprite) => spr.type === block);
+		const sprite = this.sprites.find((spr: ISprite) => spr.key === `inventory-${ this.slot }` && spr.type === block);
 		if (!sprite) return PlayerResultEnum.NOT_IN_INVENTORY;
-		const spriteIndex = this.sprites.indexOf(sprite);
 
-		for (let x=spriteIndex; x < this.count; x++) {
-			this.sprites[spriteIndex].updateType(this.sprites[spriteIndex+1].type);
-			this.sprites[spriteIndex].updateImage(ImageEnum[this.spriteName(this.sprites[spriteIndex+1].type)]);
-		}
-
-		this.sprites[this.count - 1].updateType(SpriteTypeEnum.BLANK);
-		this.sprites[this.count - 1].updateImage(ImageEnum.SPRITE00);
-
-		this.count--;
+		sprite.updateImage(ImageEnum.SPRITE00);
+		sprite.updateType(SpriteTypeEnum.BLANK);
 
 		return PlayerResultEnum.INVENTORY_USED;
 	}
 
-	private setupInventory = () => {
+	public moveSlot = (): void => {
+		this.setSlot(ImageEnum.SPRITE00);
+		this.slot ++;
+		if (this.slot > this.MAX_ITEMS) this.slot = 1;
+		this.setSlot(ImageEnum.PLAYER);
+	}
+
+	public drop = (): SpriteTypeEnum | null => {
+		const sprite = this.sprites.find((spr: ISprite) => spr.key === `inventory-${ this.slot }`);
+		if (!sprite || sprite.type === SpriteTypeEnum.BLANK) return null;
+
+		return sprite.type;
+	}
+
+	public remove = (type: SpriteTypeEnum): void => {
+		const sprite = this.sprites.find((spr: ISprite) => spr.type === type);
+		if (!sprite) return;
+
+		sprite.updateImage(ImageEnum.SPRITE00);
+		sprite.updateType(SpriteTypeEnum.BLANK);
+	}
+
+	private setSlot = (image: ImageEnum): void => {
+		const sprite = this.sprites.find((spr: ISprite) => spr.key === `selected-inventory-${ this.slot }`);
+		if (!sprite) return;
+
+		sprite.updateImage(image);
+	}
+
+	private setupInventory = (): void => {
 		let count = 0;
-		for (let x = 1; x <= this.spriteBlockWidth * this.spriteWidth; x += 2) {
+		for (let x = 1; x <= this.MAX_ITEMS * 2; x += 2) {
 			count ++;
-			this.sprites.push(this.newBlock(count, x, this.spriteBlockHeight * this.spriteHeight + 1, this.WIDTH, this.HEIGHT, this.BLANK));
+			this.sprites.push(this.newBlock(`selected-inventory-${ count }`, x * 2, this.WIDTH, this.HEIGHT, this.BLANK, false));
+			this.sprites.push(this.newBlock(`inventory-${ count }`, x * 2 + 1, this.WIDTH, this.HEIGHT, this.BLANK, true));
 		}
 	}
 
-	private newBlock = (count: number, x: number, y: number, width: number, height: number, block: number): ISprite => {
+	private newBlock = (key: string, x: number, width: number, height: number, block: number, outline: boolean): ISprite => {
 		const type: string = SpriteTypeEnum[block];
 
 		return new Sprite({
-			key: `inventory-${ count }`,
+			key,
 			visable: true,
-			x: (x - 1) * width + 1,
-			y: (y - 1) * height + 1,
+			x: x + this.X_OFFSET,
+			y: 0,
 			width,
 			height,
 			image: ImageEnum[this.spriteName(block)],
 			type: SpriteTypeEnum[type],
-			outline: true,
+			outline,
 		})
 	};
 
