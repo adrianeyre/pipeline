@@ -6,6 +6,7 @@
 * [Installation and Run](#Install)
 * [Screen Shots](#Shots)
 * [Play Pipeline](#Play)
+* [Level Edit](#Edit)
 
 ## <a name="Install">Installation and Run</a>
 * To clone the repo and run the game
@@ -23,3 +24,11 @@ $ npm start
 
 ## <a name="Play">Pipeline</a>
 * [Pipeline](http://adrianeyre.co.uk/pipeline)
+
+
+
+## <a name="Edit">Level Edit</a>
+- While game is in play press `e` to toggle level edit screen
+- While game is in play press `m` to display level map
+
+Copy the map array and save it into the `/public/levels/level01.dat` file
