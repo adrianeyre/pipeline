@@ -43,9 +43,9 @@ enum ImageEnum {
 	SPRITE41 = 'sprite41',
 	SPRITE42 = 'sprite42',
 	SPRITE43 = 'sprite43',
-	SPRITE97 = 'monster',
-	SPRITE98 = 'monster',
-	SPRITE99 = 'monster',
+	SPRITE97 = 'sprite97',
+	SPRITE98 = 'sprite98',
+	SPRITE99 = 'sprite99',
 	PLAYER = 'player',
 }
 

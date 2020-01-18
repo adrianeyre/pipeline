@@ -6,6 +6,7 @@ import ISprite from './interfaces/sprite';
 import IBoard from './interfaces/board';
 import PlayerResultEnum from './enums/player-result-enum';
 import DirectionEnum from './enums/direction-enum';
+import SpriteTypeEnum from './enums/sprite-type-enum';
 import IPipelineProps from '../components/pipeline/interfaces/pipeline-props';
 
 export default class Game implements IGame {
@@ -18,6 +19,7 @@ export default class Game implements IGame {
 	public isGameInPlay: boolean;
 	public timerInterval: number;
 	public editing: boolean;
+	public selectedSprite: SpriteTypeEnum;
 
 	readonly DEFAULT_TIMER_INTERVAL: number = 50;
 	readonly PLAYER_TIME_OUT: number = 20;
@@ -32,6 +34,7 @@ export default class Game implements IGame {
 		this.iteration = 0;
 		this.timerInterval = this.DEFAULT_TIMER_INTERVAL;
 		this.editing = false;
+		this.selectedSprite = SpriteTypeEnum.BLANK;
 
 		this.player.setStartPosition(this.board.startX, this.board.startY);
 	}
@@ -63,6 +66,8 @@ export default class Game implements IGame {
 				this.toggleEditing(); break
 			case PlayerResultEnum.EDIT_SPRITE:
 				this.editSprite(sprite); break
+			case PlayerResultEnum.SELECT_SPRITE:
+				this.selectSprite(sprite); break;
 		}
 	}
 
@@ -136,7 +141,13 @@ export default class Game implements IGame {
 	private editSprite = (sprite?: ISprite) => {
 		if (!sprite || !this.editing) return;
 
-		this.board.setBlock(99, sprite.blockX, sprite.blockY);
+		this.board.setBlock(this.selectedSprite, sprite.blockX, sprite.blockY);
 		this.board.updateBoard(this.player.blockX, this.player.blockY);
+	}
+
+	private selectSprite = (sprite?: ISprite): void => {
+		if (!sprite || !this.editing) return;
+
+		this.selectedSprite = sprite.type;
 	}
 }

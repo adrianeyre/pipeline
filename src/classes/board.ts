@@ -22,10 +22,15 @@ export default class Board implements IBoard {
 	public sprites: ISprite[];
 	public monsters: IMonster[];
 	public inventory: IInventory;
+	public spriteSelection: ISprite[];
 	public currentLevel: number;
 	public startX: number;
 	public startY: number;
 	public fileService: IFileService;
+	public boardWidth: number;
+	public boardHeight: number;
+	public xMargin: number;
+	public yMargin: number;
 
 	readonly SPRITE_BLOCKS_WIDTH: number = 12;
 	readonly SPRITE_BLOCKS_HEIGHT: number = 12;
@@ -40,6 +45,11 @@ export default class Board implements IBoard {
 		this.startY = config.playerY;
 		this.sprites = [];
 		this.monsters = [];
+		this.boardWidth = 0;
+		this.boardHeight = 0;
+		this.xMargin = 0;
+		this.yMargin = 0;
+		this.spriteSelection = this.allSprites();
 		this.inventory = new Inventory({
 			spriteBlockWidth: this.SPRITE_BLOCKS_WIDTH,
 			spriteBlockHeight: this.SPRITE_BLOCKS_HEIGHT,
@@ -226,6 +236,10 @@ export default class Board implements IBoard {
 
 		this.setBoard(this.startX, this.startY);
 		this.monsters = this.getMonsters();
+		this.boardWidth = this.board[0].length;
+		this.boardHeight = this.board.length;
+		this.xMargin = Math.floor(this.SPRITE_BLOCKS_WIDTH / 2);
+		this.yMargin = Math.floor(this.SPRITE_BLOCKS_HEIGHT / 2);
 	}
 
 	private newBlock = (x: number, y: number, blockX: number, blockY: number, width: number, height: number, block: number): ISprite => {
@@ -244,6 +258,24 @@ export default class Board implements IBoard {
 			type: SpriteTypeEnum[type],
 			outline: false,
 		})
+	}
+
+	private allSprites = (): ISprite[] => {
+		const sprites = Object.keys(SpriteTypeEnum)
+		const halfLength = Math.ceil(sprites.length / 2);
+		let x = 0;
+		let y = 1;
+		
+		const allSprites: ISprite[] = sprites.splice(0, halfLength).map((value: string, block: number) => {
+			x++;
+			if (x > this.SPRITE_BLOCKS_WIDTH * this.SPRITE_WIDTH) {
+				x = 1;
+				y++;
+			}
+			return this.newBlock(x, y, 1, 1, 1, 1, parseInt(value))
+		})
+
+		return allSprites;
 	}
 
 	private spriteName = (sprite: number) => `SPRITE${ sprite.toString().length === 1 ? '0' : '' }${ sprite }`;

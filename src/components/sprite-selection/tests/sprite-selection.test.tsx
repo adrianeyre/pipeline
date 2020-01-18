@@ -1,12 +1,12 @@
 import React from 'react';
 import { shallow } from 'enzyme';
 
-import GameStatusBottom from '../game-status-bottom';
-import IGameStatusBottomProps from '../interfaces/game-status-bottom-props';
+import GameStatusBottom from '../sprite-selection';
+import ISpriteSelectionProps from '../interfaces/sprite-selection-props';
 
 describe('Game Status Bottom', () => {
 	it('Should render correctly', () => {
-		const defaultProps: IGameStatusBottomProps = {
+		const defaultProps: ISpriteSelectionProps = {
 			sprites: [],
 			spriteHeight: 3,
 			spriteWidth: 3,

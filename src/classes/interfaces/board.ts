@@ -12,8 +12,13 @@ export default interface IBoard {
 	sprites: ISprite[];
 	monsters: IMonster[];
 	inventory: IInventory;
+	spriteSelection: ISprite[];
 	startX: number;
 	startY: number;
+	boardWidth: number;
+	boardHeight: number;
+	xMargin: number;
+	yMargin: number;
 	fileService: IFileService;
 	setBoard(playerX: number, playerY: number): void;
 	updateBoard(playerX: number, playerY: number): void;

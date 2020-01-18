@@ -43,6 +43,9 @@ enum StriteTypeEnum {
 	GREEN_KEY = 41,
 	AXE = 42,
 	SKULL = 43,
+	MONSTER_HORIZONTAL = 97,
+	MONSTER_VERTICAL = 98,
+	MONSTER_DIRECTIONAL = 99,
 }
 
 export default StriteTypeEnum;

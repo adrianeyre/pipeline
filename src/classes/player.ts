@@ -86,6 +86,7 @@ export default class Player implements IPlayer {
 
 	public looseLife = (): PlayerResultEnum => {
 		this.lives --;
+		this.inPipe = false;
 		this.resetStartPosition();
 
 		return this.lives < 1 ? PlayerResultEnum.DEAD : PlayerResultEnum.LOOSE_LIFE
@@ -107,6 +108,8 @@ export default class Player implements IPlayer {
 			case DirectionEnum.LEFT:
 				x --; break;
 		}
+
+		if (!this.playerInBoundaries(x, y, board)) return PlayerResultEnum.SAFE;
 
 		if (editing) {
 			this.movePlayer(x, y);
@@ -173,6 +176,12 @@ export default class Player implements IPlayer {
 
 		return result;
 	}
+
+	private playerInBoundaries = (x: number, y: number, board: IBoard): boolean =>
+		x > board.xMargin &&
+		x <= board.boardWidth - board.xMargin &&
+		y > board.yMargin &&
+		y <= board.boardHeight - board.yMargin;
 
 	private moveToBlank = (x: number, y: number): PlayerResultEnum => {
 		this.inPipe = false;

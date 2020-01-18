@@ -7,6 +7,7 @@ import IPipelineProps from './interfaces/pipeline-props';
 import IPipelineState from './interfaces/pipeline-state';
 import GameStatusTop from '../game-status-top/game-status-top';
 import GameStatusBottom from '../game-status-bottom/game-status-bottom';
+import SpriteSelection from '../sprite-selection/sprite-selection';
 import DrawSprite from '../draw-sprite/draw-sprite';
 import InfoBoard from '../info-board/info-board';
 import MobileButtons from '../mobile-buttons/mobile-buttons';
@@ -50,7 +51,7 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 	public render() {
 		return <div className="pipeline-play-container" ref={(d) => { this.container = d }} style={ this.styleContainer() }>
 			{ !this.state.showBoardMap && <div>
-				{ !this.state.game.editing && <div>
+				{ !this.state.game.editing && this.state.game.isGameInPlay && <div>
 					<div style={ this.styleStatusTop() }><GameStatusTop score={ this.state.game.player.score } lives={ this.state.game.player.lives } /></div>
 				</div> }
 
@@ -68,7 +69,11 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 					</div> }
 				</div> }
 
-				{ !this.state.game.editing && <div>
+				{ this.state.game.editing && this.state.game.isGameInPlay && <div>
+					<div style={ this.styleSpriteSelection() }><SpriteSelection sprites={ this.state.game.board.spriteSelection } handleClick={ this.handleSelectSpriteClick } spriteHeight={ this.state.spriteHeight } spriteWidth={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } /></div>
+				</div> }
+
+				{ !this.state.game.editing && this.state.game.isGameInPlay && <div>
 					<div style={ this.styleStatusBottom() }><GameStatusBottom sprites={ this.state.game.board.inventory.sprites } handleClick={ this.handleClick } spriteHeight={ this.state.spriteHeight } spriteWidth={ this.state.spriteWidth } containerWidth={ this.state.containerWidth } /></div>
 				</div> }
 
@@ -78,7 +83,7 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 			{ this.state.showBoardMap && <div className="map">
 				[{ this.state.game.board.board.map((board: number[], index: number) => <div key={ `map-${ index }` }>[
 					{ board.join(',') }
-				],</div> )}]
+				]{ index < this.state.game.board.board.length - 1 ? ',' : ''}</div> )}]
 			</div> }
 		</div>
 	}
@@ -97,6 +102,13 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 		position: 'absolute' as 'absolute',
 		width: `100%`,
 		maxWidth: `${ this.state.containerHeight }px`,
+	})
+
+	private styleSpriteSelection = () => ({
+		position: 'absolute' as 'absolute',
+		width: `100%`,
+		maxWidth: `${ this.state.containerHeight }px`,
+		top: `${ this.state.containerWidth / 100 * 85 }px`,
 	})
 
 	private styleStatusBottom = () => ({
@@ -184,11 +196,10 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 		this.state.game.handleInput(PlayerResultEnum.EDIT_SPRITE, sprite);
 	}
 
-	private handleClick = async (sprite: ISprite) => {
-		
+	private handleSelectSpriteClick = async (sprite: ISprite) => {
+		this.state.game.handleInput(PlayerResultEnum.SELECT_SPRITE, sprite);
 	}
 
-	private handleClickPlayer = (sprite: ISprite) => {
-
-	}
+	private handleClick = async (sprite: ISprite) => {}
+	private handleClickPlayer = (sprite: ISprite) => {}
 }

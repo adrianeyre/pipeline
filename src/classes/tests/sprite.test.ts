@@ -13,10 +13,13 @@ describe('Sprite', () => {
 			visable: true,
 			x: 10,
 			y: 10,
+			blockX: 1,
+			blockY: 1,
 			width: 8,
 			height: 8,
 			image: ImageEnum.SPRITE00,
-			type: SpriteTypeEnum.SPRITE00,
+			type: SpriteTypeEnum.BLANK,
+			outline: false,
 		}
 	})
 
@@ -31,6 +34,6 @@ describe('Sprite', () => {
 		expect(sprite.height).toEqual(8);
 		expect(sprite.zIndex).toEqual(5000);
 		expect(sprite.image).toEqual('sprite00.png');
-		expect(sprite.type).toEqual(SpriteTypeEnum.SPRITE00);
+		expect(sprite.type).toEqual(SpriteTypeEnum.BLANK);
 	});
 });
