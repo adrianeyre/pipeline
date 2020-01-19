@@ -9,7 +9,8 @@ export default interface IGame {
 	sprites?: ISprite[];
 	board: IBoard;
 	level: number;
-	iteration: number;
+	monsterIteration: number;
+	boulderIteration: number;
 	timer: any;
 	playerTimeOut: number;
 	isGameInPlay: boolean;

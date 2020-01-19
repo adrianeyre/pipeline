@@ -121,11 +121,15 @@ export default class Player implements IPlayer {
 
 		switch (block) {
 			case SpriteTypeEnum.BLANK:
-				return this.moveToBlank(x, y);
+				this.moveToBlank(x, y); break;
 			case SpriteTypeEnum.POINTS:
-				this.addStarPoints(); this.movePlayer(x, y); return PlayerResultEnum.STAR;
-			case SpriteTypeEnum.BOLDER:
-				this.moveBolder(x, y, direction, board); break;
+				this.addStarPoints(); this.movePlayer(x, y); result = PlayerResultEnum.STAR; break;
+			case SpriteTypeEnum.GRASS:
+				this.movePlayer(x, y); result = PlayerResultEnum.GRASS; break;
+			case SpriteTypeEnum.BOULDER:
+				this.moveBoulder(x, y, direction, board, block); result = PlayerResultEnum.BOLDER_MOVED; break;
+			case SpriteTypeEnum.DROP_BOULDER:
+				result = this.moveDropBoulder(x, y, direction, board, block); break
 			case SpriteTypeEnum.HORIZONTAL_PIPE:
 			case SpriteTypeEnum.VERTICAL_PIPE:
 			case SpriteTypeEnum.CONNECTION_PIPE:
@@ -198,10 +202,18 @@ export default class Player implements IPlayer {
 		if (this.iteration > 3) this.iteration = 0;
 	}
 
-	private moveBolder = (x: number, y: number, direction: DirectionEnum, board: IBoard): void => {
-		const result = board.moveBolder(x, y, direction);
+	private moveBoulder = (x: number, y: number, direction: DirectionEnum, board: IBoard, block: SpriteTypeEnum): void => {
+		const result = board.moveBoulder(block, x, y, direction);
 
 		if (result === PlayerResultEnum.BOLDER_MOVED) this.movePlayer(x, y);
+	}
+
+	private moveDropBoulder = (x: number, y: number, direction: DirectionEnum, board: IBoard, block: SpriteTypeEnum): PlayerResultEnum => {
+		if (direction === DirectionEnum.UP) return PlayerResultEnum.SAFE;
+		const result = board.moveBoulder(block, x, y, direction);
+
+		if (result === PlayerResultEnum.BOLDER_MOVED) this.movePlayer(x, y);
+		return result;
 	}
 
 	private useAxe = (x: number, y: number, board: IBoard, block: number) => {

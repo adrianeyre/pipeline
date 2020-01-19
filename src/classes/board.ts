@@ -56,8 +56,6 @@ export default class Board implements IBoard {
 			spriteWidth: this.SPRITE_WIDTH,
 			spriteHeight: this.SPRITE_HEIGHT,
 		});
-
-		this.getBoard();
 	}
 
 	public setBoard = (playerX: number, playerY: number): void => {
@@ -94,7 +92,7 @@ export default class Board implements IBoard {
 	public validate = (x: number, y: number): StriteTypeEnum => this.board[y-1][x-1];
 	public setBlock = (block: number, x: number, y: number): number => this.board[y-1][x-1] = block;
 
-	public moveBolder = (x: number, y: number, direction: DirectionEnum): PlayerResultEnum => {
+	public moveBoulder = (block: SpriteTypeEnum, x: number, y: number, direction: DirectionEnum): PlayerResultEnum => {
 		let xPos = x;
 		let yPos = y;
 
@@ -110,10 +108,10 @@ export default class Board implements IBoard {
 		}
 
 		if (this.board[yPos-1][xPos-1] === 0) {
-			this.setBlock(0, x, y)
-			this.setBlock(3, xPos, yPos)
-			this.updateBlock(0, x, y, xPos, yPos);
-			this.updateBlock(3, xPos, yPos, xPos, yPos);
+			this.setBlock(SpriteTypeEnum.BLANK, x, y)
+			this.setBlock(block, xPos, yPos)
+			this.updateBlock(SpriteTypeEnum.BLANK, x, y, xPos, yPos);
+			this.updateBlock(block, xPos, yPos, xPos, yPos);
 			return PlayerResultEnum.BOLDER_MOVED;
 		}
 
@@ -171,9 +169,64 @@ export default class Board implements IBoard {
 		this.board = await this.fileService.readFile(this.currentLevel);
 	}
 
+	public getBoard = async (): Promise<void> => {
+		await this.readLevel();
+
+		const { xPos, yPos } = this.getPlayerStartPosition();
+		this.startX = xPos ?? this.startX;
+		this.startY = yPos ?? this.startY;
+		if (xPos && yPos) this.board[yPos-1][xPos-1] = 0;
+
+		this.setBoard(this.startX, this.startY);
+		this.monsters = this.getMonsters();
+		this.boardWidth = this.board[0].length;
+		this.boardHeight = this.board.length;
+		this.xMargin = Math.floor(this.SPRITE_BLOCKS_WIDTH / 2);
+		this.yMargin = Math.floor(this.SPRITE_BLOCKS_HEIGHT / 2);
+	}
+
+	public boulderDrop = (playerX: number, playerY: number): void => {
+		const boulders = [];
+
+		for(let x = 0; x <= this.board.length; x++) {
+			for(let y = 0; y < this.board[0].length; y++) {
+				if (
+					this.board[y][x] === SpriteTypeEnum.DROP_BOULDER &&
+					y < this.boardHeight - this.yMargin - 1 &&
+					this.board[y + 1][x] === SpriteTypeEnum.BLANK
+				) boulders.push({ direction: DirectionEnum.DOWN, x, y });
+
+				if (
+					this.board[y][x] === SpriteTypeEnum.DROP_BOULDER &&
+					y < this.boardHeight - this.yMargin - 1 &&
+					this.board[y + 1][x] === SpriteTypeEnum.DROP_WALL_RIGHT &&
+					this.board[y][x + 1] === SpriteTypeEnum.BLANK
+				) boulders.push({ direction: DirectionEnum.RIGHT, x, y });
+
+				if (
+					this.board[y][x] === SpriteTypeEnum.DROP_BOULDER &&
+					y < this.boardHeight - this.yMargin - 1 &&
+					this.board[y + 1][x] === SpriteTypeEnum.DROP_WALL_LEFT &&
+					this.board[y][x - 1] === SpriteTypeEnum.BLANK
+				) boulders.push({ direction: DirectionEnum.LEFT, x, y });
+			}
+		}
+
+		boulders.forEach((boulder: any) => this.dropBoulder(boulder.direction, boulder.x, boulder.y, playerX, playerY));
+	}
+
+	private dropBoulder = (direction: DirectionEnum, x: number, y: number, playerX: number, playerY: number): void => {
+		if (x + 1 === playerX && y + 2 === playerY) return;
+		this.board[y][x] = SpriteTypeEnum.BLANK;
+		if (direction === DirectionEnum.DOWN) this.board[y + 1][x] = SpriteTypeEnum.DROP_BOULDER;
+		if (direction === DirectionEnum.RIGHT) this.board[y][x + 1] = SpriteTypeEnum.DROP_BOULDER;
+		if (direction === DirectionEnum.LEFT) this.board[y][x - 1] = SpriteTypeEnum.DROP_BOULDER;
+		this.updateBoard(playerX, playerY)
+	}
+
 	private getPlayerStartPosition = (): any => {
 		for (let y = 1; y < this.board.length; y++) {
-			const x = this.board[y].indexOf(-1);
+			const x = this.board[y].indexOf(SpriteTypeEnum.START);
 			if (x > -1) {
 				return { xPos: x + 1, yPos: y + 1 };
 			}
@@ -189,7 +242,7 @@ export default class Board implements IBoard {
 			for(let y = 0; y < this.board[0].length; y++) {
 				const block = this.board[y][x];
 				if (block >= 97 && block <= 99) {
-					this.board[y][x] = 0;
+					this.board[y][x] = SpriteTypeEnum.BLANK;
 					const type: string = MonsterTypeEnum[block];
 					const direction: string = DirectionEnum[block - 96];
 
@@ -225,22 +278,6 @@ export default class Board implements IBoard {
 
 	private xStart = (playerX: number): number => playerX - Math.floor(this.SPRITE_BLOCKS_WIDTH / 2) - 1;
 	private yStart = (playerY: number): number => playerY - Math.floor(this.SPRITE_BLOCKS_HEIGHT / 2) - 1;
-
-	private getBoard = async () => {
-		await this.readLevel();
-
-		const { xPos, yPos } = this.getPlayerStartPosition();
-		this.startX = xPos ?? this.startX;
-		this.startY = yPos ?? this.startY;
-		if (xPos && yPos) this.board[yPos-1][xPos-1] = 0;
-
-		this.setBoard(this.startX, this.startY);
-		this.monsters = this.getMonsters();
-		this.boardWidth = this.board[0].length;
-		this.boardHeight = this.board.length;
-		this.xMargin = Math.floor(this.SPRITE_BLOCKS_WIDTH / 2);
-		this.yMargin = Math.floor(this.SPRITE_BLOCKS_HEIGHT / 2);
-	}
 
 	private newBlock = (x: number, y: number, blockX: number, blockY: number, width: number, height: number, block: number): ISprite => {
 		const type: string = SpriteTypeEnum[block];

@@ -47,6 +47,11 @@ import sprite40 from '../images/sprite40.png';
 import sprite41 from '../images/sprite41.png';
 import sprite42 from '../images/sprite42.png';
 import sprite43 from '../images/sprite43.png';
+import sprite44 from '../images/sprite44.png';
+import sprite45 from '../images/sprite45.png';
+import sprite46 from '../images/sprite46.png';
+import sprite47 from '../images/sprite47.png';
+import sprite50 from '../images/player.png';
 import sprite97 from '../images/monster01.png';
 import sprite98 from '../images/monster01.png';
 import sprite99 from '../images/monster01.png';
@@ -76,7 +81,8 @@ export default class Sprite implements ISprite {
 		sprite24, sprite25, sprite26, sprite27, sprite28, sprite29,
 		sprite30, sprite31, sprite32, sprite33, sprite34, sprite35,
 		sprite36, sprite37, sprite38, sprite39, sprite40, sprite41,
-		sprite42, sprite43,
+		sprite42, sprite43, sprite44, sprite45, sprite46, sprite47,
+		sprite50,
 		sprite97, sprite98, sprite99,
 		monster, player,
 	}

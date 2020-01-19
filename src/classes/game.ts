@@ -14,7 +14,8 @@ export default class Game implements IGame {
 	public board: IBoard;
 	public level: number;
 	public timer: any;
-	public iteration: number;
+	public monsterIteration: number;
+	public boulderIteration: number;
 	public playerTimeOut: number;
 	public isGameInPlay: boolean;
 	public timerInterval: number;
@@ -24,6 +25,7 @@ export default class Game implements IGame {
 	readonly DEFAULT_TIMER_INTERVAL: number = 50;
 	readonly PLAYER_TIME_OUT: number = 20;
 	readonly MONSTER_ITERATION: number = 5;
+	readonly BOULDER_ITERATION: number = 2;
 	
 	constructor(config: IPipelineProps) {
 		this.level = 1;
@@ -31,12 +33,13 @@ export default class Game implements IGame {
 		this.board = new Board({ currentLevel: this.level, playerX: this.player.blockX, playerY: this.player.blockY });
 		this.isGameInPlay = false;
 		this.playerTimeOut = 0;
-		this.iteration = 0;
+		this.monsterIteration = 0;
+		this.boulderIteration = 0;
 		this.timerInterval = this.DEFAULT_TIMER_INTERVAL;
 		this.editing = false;
 		this.selectedSprite = SpriteTypeEnum.BLANK;
 
-		this.player.setStartPosition(this.board.startX, this.board.startY);
+		this.setupGame();
 	}
 
 	public handleInput = (playerResult: PlayerResultEnum, sprite?: ISprite): void => {
@@ -45,7 +48,8 @@ export default class Game implements IGame {
 			case PlayerResultEnum.PLAYER_MOVED:
 				return;
 			case PlayerResultEnum.STAR:
-				this.board.setBlock(0, this.player.blockX, this.player.blockY); break;
+			case PlayerResultEnum.GRASS:
+				this.board.setBlock(SpriteTypeEnum.BLANK, this.player.blockX, this.player.blockY); break;
 			case PlayerResultEnum.ARROW_UP:
 				this.movePlayer(DirectionEnum.UP); break;
 			case PlayerResultEnum.ARROW_DOWN:
@@ -68,6 +72,8 @@ export default class Game implements IGame {
 				this.editSprite(sprite); break
 			case PlayerResultEnum.SELECT_SPRITE:
 				this.selectSprite(sprite); break;
+			case PlayerResultEnum.BOLDER_MOVED:
+				this.board.boulderDrop(this.player.blockX, this.player.blockY); break;
 		}
 	}
 
@@ -82,12 +88,24 @@ export default class Game implements IGame {
 
 		if (this.player.inPipe) this.updateBoard(this.player.direction);
 
-		this.iteration ++;
+		this.monsterIteration ++;
 
-		if (this.iteration >= this.MONSTER_ITERATION) {
-			this.iteration = 0;
+		if (this.monsterIteration >= this.MONSTER_ITERATION) {
+			this.monsterIteration = 0;
 			this.handleInput(this.board.moveMonstersWithTimer(this.player.blockX, this.player.blockY));
 		}
+
+		this.boulderIteration ++;
+
+		if (this.boulderIteration >= this.BOULDER_ITERATION) {
+			this.boulderIteration = 0;
+			this.board.boulderDrop(this.player.blockX, this.player.blockY);
+		}
+	}
+
+	private setupGame = async (): Promise<void> => {
+		await this.board.getBoard();
+		await this.player.setStartPosition(this.board.startX, this.board.startY);
 	}
 
 	private movePlayer = (direction: DirectionEnum): void => {

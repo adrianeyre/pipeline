@@ -20,11 +20,13 @@ export default interface IBoard {
 	xMargin: number;
 	yMargin: number;
 	fileService: IFileService;
+	getBoard(): Promise<void>;
+	boulderDrop(playerX: number, playerY: number): void;
 	setBoard(playerX: number, playerY: number): void;
 	updateBoard(playerX: number, playerY: number): void;
 	validate(x: number, y: number): StriteTypeEnum;
 	setBlock(block: number, x: number, y: number): number;
-	moveBolder(x: number, y: number, direction: DirectionEnum): PlayerResultEnum;
+	moveBoulder(block: SpriteTypeEnum, x: number, y: number, direction: DirectionEnum): PlayerResultEnum;
 	moveMonstersWithPlayer(playerX: number, playerY: number): PlayerResultEnum;
 	moveMonstersWithTimer(playerX: number, playerY: number): PlayerResultEnum;
 	teleport(x: number, y: number, block: SpriteTypeEnum): any;

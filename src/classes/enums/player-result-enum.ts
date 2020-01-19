@@ -11,6 +11,7 @@ enum PlayerResultEnum {
 	DEAD = 8,
 	EDIT_SPRITE = 9,
 	SELECT_SPRITE = 10,
+	GRASS = 11,
 	ENTER = 13,
 	SPACE_BAR = 32,
 	ARROW_UP = 38,
