@@ -48,6 +48,7 @@ export default class Game implements IGame {
 			case PlayerResultEnum.PLAYER_MOVED:
 				return;
 			case PlayerResultEnum.STAR:
+				this.collectStar(); break
 			case PlayerResultEnum.GRASS:
 				this.board.setBlock(SpriteTypeEnum.BLANK, this.player.blockX, this.player.blockY); break;
 			case PlayerResultEnum.ARROW_UP:
@@ -73,7 +74,7 @@ export default class Game implements IGame {
 			case PlayerResultEnum.SELECT_SPRITE:
 				this.selectSprite(sprite); break;
 			case PlayerResultEnum.BOLDER_MOVED:
-				this.board.boulderDrop(this.player.blockX, this.player.blockY); break;
+				this.boulderDrop(); break;
 		}
 	}
 
@@ -99,9 +100,17 @@ export default class Game implements IGame {
 
 		if (this.boulderIteration >= this.BOULDER_ITERATION) {
 			this.boulderIteration = 0;
-			this.board.boulderDrop(this.player.blockX, this.player.blockY);
+			this.boulderDrop()
 		}
 	}
+
+	private collectStar = (): void => {
+		const stars = this.board.collectStar();
+		if (stars <= 1) this.nextLevel();
+		this.board.setBlock(SpriteTypeEnum.BLANK, this.player.blockX, this.player.blockY)
+	}
+
+	private boulderDrop = (): void => this.handleInput(this.board.boulderDrop(this.player.blockX, this.player.blockY));
 
 	private setupGame = async (): Promise<void> => {
 		await this.board.getBoard();
@@ -135,6 +144,10 @@ export default class Game implements IGame {
 	}
 
 	private dead = (): void => {
+		this.isGameInPlay = false;
+	}
+
+	private nextLevel = (): void => {
 		this.isGameInPlay = false;
 	}
 

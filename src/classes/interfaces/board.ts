@@ -19,9 +19,11 @@ export default interface IBoard {
 	boardHeight: number;
 	xMargin: number;
 	yMargin: number;
+	stars: number;
 	fileService: IFileService;
+	collectStar(): number;
 	getBoard(): Promise<void>;
-	boulderDrop(playerX: number, playerY: number): void;
+	boulderDrop(playerX: number, playerY: number): PlayerResultEnum;
 	setBoard(playerX: number, playerY: number): void;
 	updateBoard(playerX: number, playerY: number): void;
 	validate(x: number, y: number): StriteTypeEnum;

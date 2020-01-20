@@ -1,5 +1,3 @@
-// import { cloneDeep } from 'lodash';
-
 import IBoard from './interfaces/board';
 import ISprite from './interfaces/sprite';
 import IInventory from './interfaces/inventory';
@@ -31,6 +29,7 @@ export default class Board implements IBoard {
 	public boardHeight: number;
 	public xMargin: number;
 	public yMargin: number;
+	public stars: number;
 
 	readonly SPRITE_BLOCKS_WIDTH: number = 12;
 	readonly SPRITE_BLOCKS_HEIGHT: number = 12;
@@ -49,6 +48,7 @@ export default class Board implements IBoard {
 		this.boardHeight = 0;
 		this.xMargin = 0;
 		this.yMargin = 0;
+		this.stars = 0;
 		this.spriteSelection = this.allSprites();
 		this.inventory = new Inventory({
 			spriteBlockWidth: this.SPRITE_BLOCKS_WIDTH,
@@ -164,6 +164,7 @@ export default class Board implements IBoard {
 	}
 
 	public isMyBlock = (x: number, y: number, type: SpriteTypeEnum): boolean => this.board[y-1][x-1] === type;
+	public collectStar = (): number => this.stars--;
 
 	public readLevel = async (): Promise<void> => {
 		this.board = await this.fileService.readFile(this.currentLevel);
@@ -178,6 +179,7 @@ export default class Board implements IBoard {
 		if (xPos && yPos) this.board[yPos-1][xPos-1] = 0;
 
 		this.setBoard(this.startX, this.startY);
+		this.stars = 0;
 		this.monsters = this.getMonsters();
 		this.boardWidth = this.board[0].length;
 		this.boardHeight = this.board.length;
@@ -185,7 +187,7 @@ export default class Board implements IBoard {
 		this.yMargin = Math.floor(this.SPRITE_BLOCKS_HEIGHT / 2);
 	}
 
-	public boulderDrop = (playerX: number, playerY: number): void => {
+	public boulderDrop = (playerX: number, playerY: number): PlayerResultEnum => {
 		const boulders = [];
 
 		for(let x = 0; x <= this.board.length; x++) {
@@ -212,17 +214,28 @@ export default class Board implements IBoard {
 			}
 		}
 
-		boulders.forEach((boulder: any) => this.dropBoulder(boulder.direction, boulder.x, boulder.y, playerX, playerY));
+		const results = boulders.map((boulder: any) => this.dropBoulder(boulder.direction, boulder.x, boulder.y, playerX, playerY));
+		return results.indexOf(PlayerResultEnum.LOOSE_LIFE) > - 1 ? PlayerResultEnum.LOOSE_LIFE : PlayerResultEnum.SAFE;
 	}
 
-	private dropBoulder = (direction: DirectionEnum, x: number, y: number, playerX: number, playerY: number): void => {
-		if (x + 1 === playerX && y + 2 === playerY) return;
+	private dropBoulder = (direction: DirectionEnum, x: number, y: number, playerX: number, playerY: number): PlayerResultEnum => {
+		if (direction === DirectionEnum.DOWN && this.isPlayerBelow(x, y, playerX, playerY)) return PlayerResultEnum.SAFE;
+		if (direction === DirectionEnum.RIGHT && this.isPlayerRight(x, y, playerX, playerY)) return PlayerResultEnum.SAFE;
+		if (direction === DirectionEnum.LEFT && this.isPlayerLeft(x, y, playerX, playerY)) return PlayerResultEnum.SAFE;
+
 		this.board[y][x] = SpriteTypeEnum.BLANK;
+
 		if (direction === DirectionEnum.DOWN) this.board[y + 1][x] = SpriteTypeEnum.DROP_BOULDER;
 		if (direction === DirectionEnum.RIGHT) this.board[y][x + 1] = SpriteTypeEnum.DROP_BOULDER;
 		if (direction === DirectionEnum.LEFT) this.board[y][x - 1] = SpriteTypeEnum.DROP_BOULDER;
-		this.updateBoard(playerX, playerY)
+
+		this.updateBoard(playerX, playerY);
+		return PlayerResultEnum.SAFE;
 	}
+
+	private isPlayerBelow = (x: number, y: number, playerX: number, playerY: number): boolean => x + 1 === playerX && y + 2 === playerY;
+	private isPlayerRight = (x: number, y: number, playerX: number, playerY: number): boolean => x + 2 === playerX && y + 1 === playerY;
+	private isPlayerLeft = (x: number, y: number, playerX: number, playerY: number): boolean => x === playerX && y + 1 === playerY;
 
 	private getPlayerStartPosition = (): any => {
 		for (let y = 1; y < this.board.length; y++) {
@@ -241,6 +254,7 @@ export default class Board implements IBoard {
 		for(let x = 0; x <= this.board.length; x++) {
 			for(let y = 0; y < this.board[0].length; y++) {
 				const block = this.board[y][x];
+				if (block === SpriteTypeEnum.POINTS) this.stars ++;
 				if (block >= 97 && block <= 99) {
 					this.board[y][x] = SpriteTypeEnum.BLANK;
 					const type: string = MonsterTypeEnum[block];

@@ -89,7 +89,7 @@ export default class Player implements IPlayer {
 		this.inPipe = false;
 		this.resetStartPosition();
 
-		return this.lives < 1 ? PlayerResultEnum.DEAD : PlayerResultEnum.LOOSE_LIFE
+		return this.lives < 1 ? PlayerResultEnum.DEAD : PlayerResultEnum.SAFE
 	}
 	
 	public move = (direction: DirectionEnum, board: IBoard, editing: boolean): PlayerResultEnum => {
@@ -175,7 +175,7 @@ export default class Player implements IPlayer {
 			case SpriteTypeEnum.AXE:
 				this.addInventory(x, y, board, block); break;
 			case SpriteTypeEnum.SKULL:
-				result = this.looseLife(); break;
+				result = PlayerResultEnum.LOOSE_LIFE; break;
 		}
 
 		return result;
