@@ -27,6 +27,7 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 			spriteHeight: 0,
 			containerWidth: 800,
 			containerHeight: 800,
+			containerMargin: 0,
 			timerInterval: 0,
 			game: new Game(this.props),
 			showBoardMap: false,
@@ -90,6 +91,7 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 
 	private styleContainer = () => ({
 		maxWidth: `${ this.state.containerHeight }px`,
+		marginLeft: `${ this.state.containerMargin }px`
 	})
 
 	private styleInfoBoard = () => ({
@@ -155,10 +157,11 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 	private updatePlayerArea = (): void => {
 		const containerHeight = this.container && this.container.getBoundingClientRect().height;
 		let containerWidth = this.container && this.container.getBoundingClientRect().width;
+		const containerMargin = (window.innerWidth - containerWidth) / 2;
 		if (containerWidth > containerHeight) containerWidth = containerHeight;
 		const spriteWidth = containerWidth / this.SPRITE_BLOCKS_WIDTH;
 		const spriteHeight = ((containerWidth / 100) * 100 ) / this.SPRITE_BLOCKS_HEIGHT;
-		this.setState(() => ({ spriteWidth, spriteHeight, containerWidth, containerHeight }))
+		this.setState(() => ({ spriteWidth, spriteHeight, containerWidth, containerHeight, containerMargin }))
 	}
 
 	private startTimer = async (): Promise<void> => {
