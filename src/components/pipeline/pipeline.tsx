@@ -157,7 +157,7 @@ export default class Pipeline extends React.Component<IPipelineProps, IPipelineS
 	private updatePlayerArea = (): void => {
 		const containerHeight = this.container && this.container.getBoundingClientRect().height;
 		let containerWidth = this.container && this.container.getBoundingClientRect().width;
-		const containerMargin = (window.innerWidth - containerWidth) / 2;
+		const containerMargin = (window.innerWidth - containerHeight) / 2;
 		if (containerWidth > containerHeight) containerWidth = containerHeight;
 		const spriteWidth = containerWidth / this.SPRITE_BLOCKS_WIDTH;
 		const spriteHeight = ((containerWidth / 100) * 100 ) / this.SPRITE_BLOCKS_HEIGHT;
