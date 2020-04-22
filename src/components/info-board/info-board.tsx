@@ -34,8 +34,8 @@ export default class InfoBoard extends React.Component<IInfoBoardProps, {}> {
 							<td>Arrow Up</td>
 						</tr>
 						<tr>
-							<td>Move Up</td>
-							<td>Arrow Up</td>
+							<td>Move Down</td>
+							<td>Arrow Down</td>
 						</tr>
 						<tr>
 							<td>Move Left</td>
