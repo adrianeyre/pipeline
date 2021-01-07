@@ -6,7 +6,13 @@ import 'react-app-polyfill/stable';
 import Pipeline from './components/pipeline/pipeline';
 
 import './index.scss';
-import * as serviceWorker from './serviceWorker';
+import reportWebVitals from './reportWebVitals';
 
-ReactDOM.render(<Pipeline />, document.getElementById('root'));
-serviceWorker.unregister();
+ReactDOM.render(
+    <React.StrictMode>
+        <Pipeline />
+    </React.StrictMode>,
+    document.getElementById('root')
+);
+
+reportWebVitals();
