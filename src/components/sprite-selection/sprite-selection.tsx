@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 
 import ISpriteSelectionProps from './interfaces/sprite-selection-props';
 import DrawSprite from '../draw-sprite/draw-sprite';

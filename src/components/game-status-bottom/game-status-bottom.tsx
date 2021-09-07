@@ -1,4 +1,4 @@
-import React, { FC } from 'react';
+import { FC } from 'react';
 
 import IGameStatusBottomProps from './interfaces/game-status-bottom-props';
 import DrawSprite from '../draw-sprite/draw-sprite';
