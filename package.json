@@ -8,7 +8,6 @@
     "type": "git",
     "url": "git+https://github.com/adrianeyre/pipeline.git"
   },
-  "homepage": "https://github.com/adrianeyre/pipeline#readme",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
