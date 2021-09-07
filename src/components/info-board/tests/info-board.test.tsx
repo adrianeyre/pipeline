@@ -1,4 +1,3 @@
-import React from 'react';
 import { shallow } from 'enzyme';
 
 import InfoBoard from '../info-board';
@@ -9,6 +8,7 @@ describe('Info Board', () => {
 		const defaultProps: IInfoBoardProps = {
 			gameOver: true,
 			score: 1000,
+			containerHeight: 1,
 			startGame: jest.fn(),
 		};
 
