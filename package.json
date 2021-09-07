@@ -1,7 +1,14 @@
 {
   "name": "pipeline",
+  "description": "A remake of the classic game Pipeline and Repton",
   "version": "0.2.0",
   "private": true,
+  "author": "Adrian Eyre",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adrianeyre/pipeline.git"
+  },
+  "homepage": "https://github.com/adrianeyre/pipeline#readme",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
