@@ -1,12 +1,11 @@
-import { shallow } from 'enzyme';
-
+import { render } from '@testing-library/react';
 import Pipeline from '../pipeline';
 import IPipelineProps from '../interfaces/pipeline-props';
 
 describe('Pipeline Run', () => {
 	it('Should render correctly', () => {
 		const defaultProps: IPipelineProps = {};
-		const pipeline = shallow(<Pipeline {...defaultProps} />);
+		const pipeline = render(<Pipeline {...defaultProps} />);
 		expect(pipeline).toMatchSnapshot();
 	});
 });

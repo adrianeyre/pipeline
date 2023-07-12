@@ -41,6 +41,7 @@ export default class Inventory implements IInventory {
 		if (!sprite) return PlayerResultEnum.INVENTORY_FULL;
 
 		sprite.updateType(block);
+		// @ts-ignore
 		sprite.updateImage(ImageEnum[this.spriteName(block)]);
 
 		return PlayerResultEnum.INVENTORY_ADDED;
@@ -106,11 +107,13 @@ export default class Inventory implements IInventory {
 			height,
 			blockX: 0,
 			blockY: 0,
+			// @ts-ignore
 			image: ImageEnum[this.spriteName(block)],
+			// @ts-ignore
 			type: SpriteTypeEnum[type],
 			outline,
 		})
 	};
 
-	private spriteName = (sprite: number) => `SPRITE${ sprite.toString().length === 1 ? '0' : '' }${ sprite }`;
+	private spriteName = (sprite: number): string => `SPRITE${ sprite.toString().length === 1 ? '0' : '' }${ sprite }`;
 }

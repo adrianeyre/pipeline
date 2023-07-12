@@ -1,4 +1,4 @@
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 
 import GameStatusBottom from '../sprite-selection';
 import ISpriteSelectionProps from '../interfaces/sprite-selection-props';
@@ -13,7 +13,7 @@ describe('Game Status Bottom', () => {
 			handleClick: jest.fn(),
 		};
 
-		const gameStatus = shallow(<GameStatusBottom {...defaultProps} />);
+		const gameStatus = render(<GameStatusBottom {...defaultProps} />);
 		expect(gameStatus).toMatchSnapshot();
 	});
 });

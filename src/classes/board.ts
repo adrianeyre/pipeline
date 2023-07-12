@@ -269,7 +269,9 @@ export default class Board implements IBoard {
 						height: 3,
 						blocksWidth: this.SPRITE_BLOCKS_WIDTH,
 						blocksHeight: this.SPRITE_BLOCKS_HEIGHT,
+						// @ts-ignore
 						type: MonsterTypeEnum[type],
+						// @ts-ignore
 						direction: DirectionEnum[direction],
 					}));
 				}
@@ -284,7 +286,9 @@ export default class Board implements IBoard {
 		if (!sprite) return;
 
 		const type: string = SpriteTypeEnum[block];
+		// @ts-ignore
 		sprite.updateImage(ImageEnum[this.spriteName(block)]);
+		// @ts-ignore
 		sprite.updateType(SpriteTypeEnum[type]);
 		sprite.blockX = blockX + 1;
 		sprite.blockY = blockY + 1;
@@ -305,7 +309,9 @@ export default class Board implements IBoard {
 			blockY: blockY + 1,
 			width,
 			height,
+			// @ts-ignore
 			image: ImageEnum[this.spriteName(block)],
+			// @ts-ignore
 			type: SpriteTypeEnum[type],
 			outline: false,
 		})
