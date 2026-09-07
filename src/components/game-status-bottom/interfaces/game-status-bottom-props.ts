@@ -1,7 +1,7 @@
-import ISprite from "../../../classes/interfaces/sprite";
+import ISprite from '../../../classes/interfaces/sprite';
 
 export default interface IGameStatusBottomProps {
-	sprites?: ISprite[]
+	sprites?: ISprite[];
 	spriteHeight: number;
 	spriteWidth: number;
 	containerWidth: number;

@@ -2,7 +2,7 @@ import Inventory from '../inventory';
 import IInventoryProps from '../interfaces/inventory-props';
 
 describe('Inventory', () => {
-	let defaultConfig: IInventoryProps
+	let defaultConfig: IInventoryProps;
 
 	beforeEach(() => {
 		defaultConfig = {
@@ -11,8 +11,8 @@ describe('Inventory', () => {
 			spriteWidth: 3,
 			spriteHeight: 4,
 			maxItems: 5,
-		}
-	})
+		};
+	});
 
 	it('Should create Inventory class', () => {
 		const board = new Inventory(defaultConfig);

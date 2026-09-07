@@ -11,9 +11,9 @@ export default interface ISprite {
 	blockY: number;
 	width: number;
 	height: number;
-	zIndex: number
+	zIndex: number;
 	image: string;
 	type: SpriteTypeEnum;
-	updateImage(image: ImageEnum): string
-	updateType(type: SpriteTypeEnum): SpriteTypeEnum
+	updateImage(image: ImageEnum): string;
+	updateType(type: SpriteTypeEnum): SpriteTypeEnum;
 }

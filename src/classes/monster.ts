@@ -1,3 +1,4 @@
+import IsMyBlock from './interfaces/is-my-block';
 import IMonsterProps from './interfaces/monster-props';
 import IMonster from './interfaces/monster';
 import DirectionEnum from './enums/direction-enum';
@@ -15,13 +16,13 @@ export default class Monster implements IMonster {
 	public x: number;
 	public y: number;
 	public blockX: number;
-	public blockY: number
+	public blockY: number;
 	public blocksWidth: number;
 	public blocksHeight: number;
 	public width: number;
 	public height: number;
 	public iteration: number;
-	public zIndex: number
+	public zIndex: number;
 	public direction: DirectionEnum;
 	public type: MonsterTypeEnum;
 	public image: string;
@@ -55,19 +56,23 @@ export default class Monster implements IMonster {
 		this.isAlive = true;
 	}
 
-	public move = (isMyBlock: any, playerX: number, playerY: number): PlayerResultEnum => {
+	public move = (isMyBlock: IsMyBlock, playerX: number, playerY: number): PlayerResultEnum => {
 		let x = this.blockX;
 		let y = this.blockY;
 
 		switch (this.direction) {
 			case DirectionEnum.UP:
-				y--; break;
+				y--;
+				break;
 			case DirectionEnum.RIGHT:
-				x++; break;
+				x++;
+				break;
 			case DirectionEnum.DOWN:
-				y++; break;
+				y++;
+				break;
 			case DirectionEnum.LEFT:
-				x--; break;
+				x--;
+				break;
 		}
 
 		if (isMyBlock(x, y, SpriteTypeEnum.BLANK)) {
@@ -79,7 +84,7 @@ export default class Monster implements IMonster {
 
 		this.changeDirection(isMyBlock, this.blockX, this.blockY);
 		return this.move(isMyBlock, playerX, playerY);
-	}
+	};
 
 	public moveMonstersWithPlayer = (playerX: number, playerY: number): PlayerResultEnum => {
 		const horizontalGap = Math.floor(this.blocksWidth / 2);
@@ -92,18 +97,20 @@ export default class Monster implements IMonster {
 			this.blockY < playerY + verticalGap
 		) {
 			this.visable = true;
-			let x = playerX - horizontalGap;
-			let y = playerY - verticalGap;
+			const x = playerX - horizontalGap;
+			const y = playerY - verticalGap;
 			this.x = (this.blockX - x) * this.width + 1;
 			this.y = (this.blockY - y) * this.height + 1;
 		} else {
 			this.visable = false;
 		}
 
-		return playerX === this.blockX && playerY === this.blockY ? PlayerResultEnum.LOOSE_LIFE : PlayerResultEnum.SAFE;
-	}
+		return playerX === this.blockX && playerY === this.blockY
+			? PlayerResultEnum.LOOSE_LIFE
+			: PlayerResultEnum.SAFE;
+	};
 
-	private changeDirection = (isMyBlock: any, x: number, y: number): DirectionEnum => {
+	private changeDirection = (isMyBlock: IsMyBlock, x: number, y: number): DirectionEnum => {
 		if (this.type === MonsterTypeEnum.DIRECTIONAL) {
 			const isUpBlank = isMyBlock(x, y - 1, SpriteTypeEnum.BLANK);
 			const isRightBlank = isMyBlock(x + 1, y, SpriteTypeEnum.BLANK);
@@ -112,43 +119,43 @@ export default class Monster implements IMonster {
 
 			switch (this.direction) {
 				case DirectionEnum.UP:
-					if (isRightBlank) return this.direction = DirectionEnum.RIGHT;
-					if (isLeftBlank) return this.direction = DirectionEnum.LEFT;
-					return this.direction = DirectionEnum.DOWN;
+					if (isRightBlank) return (this.direction = DirectionEnum.RIGHT);
+					if (isLeftBlank) return (this.direction = DirectionEnum.LEFT);
+					return (this.direction = DirectionEnum.DOWN);
 				case DirectionEnum.RIGHT:
-					if (isDownBlank) return this.direction = DirectionEnum.DOWN;
-					if (isUpBlank) return this.direction = DirectionEnum.UP;
-					return this.direction = DirectionEnum.LEFT;
+					if (isDownBlank) return (this.direction = DirectionEnum.DOWN);
+					if (isUpBlank) return (this.direction = DirectionEnum.UP);
+					return (this.direction = DirectionEnum.LEFT);
 				case DirectionEnum.DOWN:
-					if (isLeftBlank) return this.direction = DirectionEnum.LEFT;
-					if (isRightBlank) return this.direction = DirectionEnum.RIGHT;
-					return this.direction = DirectionEnum.UP;
+					if (isLeftBlank) return (this.direction = DirectionEnum.LEFT);
+					if (isRightBlank) return (this.direction = DirectionEnum.RIGHT);
+					return (this.direction = DirectionEnum.UP);
 				case DirectionEnum.LEFT:
-					if (isUpBlank) return this.direction = DirectionEnum.UP;
-					if (isDownBlank) return this.direction = DirectionEnum.DOWN;
-					return this.direction = DirectionEnum.RIGHT;
+					if (isUpBlank) return (this.direction = DirectionEnum.UP);
+					if (isDownBlank) return (this.direction = DirectionEnum.DOWN);
+					return (this.direction = DirectionEnum.RIGHT);
 			}
 		}
 
 		switch (this.direction) {
 			case DirectionEnum.UP:
-				return this.direction = DirectionEnum.DOWN;
+				return (this.direction = DirectionEnum.DOWN);
 			case DirectionEnum.RIGHT:
-				return this.direction = DirectionEnum.LEFT;
+				return (this.direction = DirectionEnum.LEFT);
 			case DirectionEnum.DOWN:
-				return this.direction = DirectionEnum.UP;
+				return (this.direction = DirectionEnum.UP);
 			case DirectionEnum.LEFT:
-				return this.direction = DirectionEnum.RIGHT;
+				return (this.direction = DirectionEnum.RIGHT);
 			default:
-				return DirectionEnum.RIGHT
+				return DirectionEnum.RIGHT;
 		}
-	}
+	};
 
 	private updateImage = (): void => {
 		this.image = this.setImage();
-		this.iteration ++;
+		this.iteration++;
 		if (this.iteration > 3) this.iteration = 0;
-	}
+	};
 
 	private setImage = (): string => this.playerImages[this.direction][this.iteration];
 }

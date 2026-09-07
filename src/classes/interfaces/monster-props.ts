@@ -1,5 +1,5 @@
 import MonsterTypeEnum from '../enums/monster-type-enum';
-import DirectEnum from 'classes/enums/direction-enum';
+import DirectEnum from '../enums/direction-enum';
 
 export default interface IMonsterProps {
 	key: string;

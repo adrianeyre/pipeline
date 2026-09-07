@@ -1,10 +1,16 @@
+import '@testing-library/jest-dom/vitest';
 
-import '@testing-library/jest-dom/extend-expect';
-
-window.matchMedia = window.matchMedia || function() {
-	return {
-		matches : false,
-		addListener : function() {},
-		removeListener: function() {}
-	};
-};
+// jsdom does not implement matchMedia, and the layout code asks for it.
+window.matchMedia =
+	window.matchMedia ||
+	((query: string) =>
+		({
+			matches: false,
+			media: query,
+			onchange: null,
+			addListener: () => {},
+			removeListener: () => {},
+			addEventListener: () => {},
+			removeEventListener: () => {},
+			dispatchEvent: () => false,
+		}) as MediaQueryList);

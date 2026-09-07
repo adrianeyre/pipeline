@@ -2,15 +2,15 @@ import Board from '../board';
 import IBoardProps from '../interfaces/board-props';
 
 describe('Board', () => {
-	let defaultConfig: IBoardProps
+	let defaultConfig: IBoardProps;
 
 	beforeEach(() => {
 		defaultConfig = {
 			currentLevel: 1,
 			playerX: 1,
 			playerY: 1,
-		}
-	})
+		};
+	});
 
 	it('Should create Board class', () => {
 		const board = new Board(defaultConfig);

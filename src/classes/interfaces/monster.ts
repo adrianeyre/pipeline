@@ -1,3 +1,4 @@
+import IsMyBlock from './is-my-block';
 import DirectionEnum from '../enums/direction-enum';
 import PlayerResultEnum from '../enums/player-result-enum';
 import MonsterTypeEnum from '../enums/monster-type-enum';
@@ -9,17 +10,17 @@ export default interface IMonster {
 	x: number;
 	y: number;
 	blockX: number;
-	blockY: number
+	blockY: number;
 	blocksWidth: number;
 	blocksHeight: number;
 	width: number;
 	height: number;
 	iteration: number;
-	zIndex: number
+	zIndex: number;
 	direction: DirectionEnum;
 	type: MonsterTypeEnum;
 	image: string;
 	isAlive: boolean;
-	move(isBlankBlock: any, playerX: number, playerY: number): PlayerResultEnum;
+	move(isBlankBlock: IsMyBlock, playerX: number, playerY: number): PlayerResultEnum;
 	moveMonstersWithPlayer(playerX: number, playerY: number): PlayerResultEnum;
 }

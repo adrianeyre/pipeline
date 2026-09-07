@@ -1,7 +1,7 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Game Status Top Should render correctly 1`] = `
-Object {
+exports[`Game Status Top > Should render correctly 1`] = `
+{
   "asFragment": [Function],
   "baseElement": <body>
     <div>
@@ -21,16 +21,17 @@ Object {
         <div
           class="game-status-right"
         >
-          LIVES 
+          LIVES
+           
           <img
             alt="lives"
             class="player-lives"
-            src="player.png"
+            src="/src/images/player.png"
           />
           <img
             alt="lives"
             class="player-lives"
-            src="player.png"
+            src="/src/images/player.png"
           />
         </div>
       </div>
@@ -53,16 +54,17 @@ Object {
       <div
         class="game-status-right"
       >
-        LIVES 
+        LIVES
+         
         <img
           alt="lives"
           class="player-lives"
-          src="player.png"
+          src="/src/images/player.png"
         />
         <img
           alt="lives"
           class="player-lives"
-          src="player.png"
+          src="/src/images/player.png"
         />
       </div>
     </div>

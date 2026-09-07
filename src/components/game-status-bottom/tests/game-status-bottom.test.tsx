@@ -10,7 +10,7 @@ describe('Game Status Bottom', () => {
 			spriteHeight: 3,
 			spriteWidth: 3,
 			containerWidth: 500,
-			handleClick: jest.fn(),
+			handleClick: vi.fn(),
 		};
 
 		const gameStatus = render(<GameStatusBottom {...defaultProps} />);

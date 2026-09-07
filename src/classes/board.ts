@@ -1,3 +1,5 @@
+import IBoardPosition from './interfaces/board-position';
+import { directionByName, imageForBlock, monsterTypeByName, spriteTypeByName } from './enum-lookup';
 import IBoard from './interfaces/board';
 import ISprite from './interfaces/sprite';
 import IInventory from './interfaces/inventory';
@@ -6,7 +8,6 @@ import Sprite from './sprite';
 import Inventory from './inventory';
 import Monster from './monster';
 import SpriteTypeEnum from './enums/sprite-type-enum';
-import ImageEnum from './enums/image-enum';
 import StriteTypeEnum from './enums/sprite-type-enum';
 import PlayerResultEnum from './enums/player-result-enum';
 import DirectionEnum from './enums/direction-enum';
@@ -38,8 +39,8 @@ export default class Board implements IBoard {
 
 	constructor(config: IBoardProps) {
 		this.fileService = new FileService();
-		this.currentLevel = config.currentLevel
-		this.board = [[]]
+		this.currentLevel = config.currentLevel;
+		this.board = [[]];
 		this.startX = config.playerX;
 		this.startY = config.playerY;
 		this.sprites = [];
@@ -64,61 +65,81 @@ export default class Board implements IBoard {
 		let yPos = this.yStart(playerY);
 
 		for (let x = 1; x <= this.SPRITE_BLOCKS_WIDTH; x++) {
-			for(let y = 1; y <= this.SPRITE_BLOCKS_HEIGHT; y++) {
-				this.sprites.push(this.newBlock(x, y, xPos, yPos, this.SPRITE_WIDTH, this.SPRITE_HEIGHT, this.board[yPos][xPos]));
-				yPos ++;
+			for (let y = 1; y <= this.SPRITE_BLOCKS_HEIGHT; y++) {
+				this.sprites.push(
+					this.newBlock(
+						x,
+						y,
+						xPos,
+						yPos,
+						this.SPRITE_WIDTH,
+						this.SPRITE_HEIGHT,
+						this.board[yPos][xPos],
+					),
+				);
+				yPos++;
 			}
 			yPos = this.yStart(playerY);
-			xPos ++;
+			xPos++;
 		}
 
 		this.moveMonstersWithPlayer(playerX, playerY);
-	}
+	};
 
 	public updateBoard = (playerX: number, playerY: number): void => {
 		let xPos = this.xStart(playerX);
 		let yPos = this.yStart(playerY);
 
-		for(let x = 1; x <= this.SPRITE_BLOCKS_WIDTH; x++) {
-			for(let y = 1; y <= this.SPRITE_BLOCKS_HEIGHT; y++) {
+		for (let x = 1; x <= this.SPRITE_BLOCKS_WIDTH; x++) {
+			for (let y = 1; y <= this.SPRITE_BLOCKS_HEIGHT; y++) {
 				this.updateBlock(this.board[yPos][xPos], x, y, xPos, yPos);
-				yPos ++;
+				yPos++;
 			}
 			yPos = this.yStart(playerY);
-			xPos ++;
+			xPos++;
 		}
-	}
+	};
 
-	public validate = (x: number, y: number): StriteTypeEnum => this.board[y-1][x-1];
-	public setBlock = (block: number, x: number, y: number): number => this.board[y-1][x-1] = block;
+	public validate = (x: number, y: number): StriteTypeEnum => this.board[y - 1][x - 1];
+	public setBlock = (block: number, x: number, y: number): number =>
+		(this.board[y - 1][x - 1] = block);
 
-	public moveBoulder = (block: SpriteTypeEnum, x: number, y: number, direction: DirectionEnum): PlayerResultEnum => {
+	public moveBoulder = (
+		block: SpriteTypeEnum,
+		x: number,
+		y: number,
+		direction: DirectionEnum,
+	): PlayerResultEnum => {
 		let xPos = x;
 		let yPos = y;
 
 		switch (direction) {
 			case DirectionEnum.UP:
-				yPos --; break;
+				yPos--;
+				break;
 			case DirectionEnum.RIGHT:
-				xPos ++; break;
+				xPos++;
+				break;
 			case DirectionEnum.DOWN:
-				yPos ++; break;
+				yPos++;
+				break;
 			case DirectionEnum.LEFT:
-				xPos --; break;
+				xPos--;
+				break;
 		}
 
-		if (this.board[yPos-1][xPos-1] === 0) {
-			this.setBlock(SpriteTypeEnum.BLANK, x, y)
-			this.setBlock(block, xPos, yPos)
+		if (this.board[yPos - 1][xPos - 1] === 0) {
+			this.setBlock(SpriteTypeEnum.BLANK, x, y);
+			this.setBlock(block, xPos, yPos);
 			this.updateBlock(SpriteTypeEnum.BLANK, x, y, xPos, yPos);
 			this.updateBlock(block, xPos, yPos, xPos, yPos);
 			return PlayerResultEnum.BOLDER_MOVED;
 		}
 
 		return PlayerResultEnum.SAFE;
-	}
+	};
 
-	public teleport = (playerX: number, playerY: number, block: SpriteTypeEnum): any => {
+	public teleport = (playerX: number, playerY: number, block: SpriteTypeEnum): IBoardPosition => {
 		for (let y = 1; y < this.board.length; y++) {
 			const x = this.board[y].indexOf(block);
 			if (x > -1 && playerX - 1 !== x && playerY - 1 !== y) {
@@ -127,48 +148,66 @@ export default class Board implements IBoard {
 		}
 
 		return { xPos: null, yPos: null };
-	}
+	};
 
 	public moveMonstersWithPlayer = (playerX: number, playerY: number): PlayerResultEnum => {
-		const results = this.monsters.map((monster: IMonster) => monster.moveMonstersWithPlayer(playerX, playerY));
-		return results.indexOf(PlayerResultEnum.LOOSE_LIFE) > - 1 ? PlayerResultEnum.LOOSE_LIFE : PlayerResultEnum.SAFE;
-	}
+		const results = this.monsters.map((monster: IMonster) =>
+			monster.moveMonstersWithPlayer(playerX, playerY),
+		);
+		return results.indexOf(PlayerResultEnum.LOOSE_LIFE) > -1
+			? PlayerResultEnum.LOOSE_LIFE
+			: PlayerResultEnum.SAFE;
+	};
 
 	public moveMonstersWithTimer = (playerX: number, playerY: number): PlayerResultEnum => {
-		const results = this.monsters.map((monster: IMonster) => monster.move(this.isMyBlock, playerX, playerY));
-		return results.indexOf(PlayerResultEnum.LOOSE_LIFE) > - 1 ? PlayerResultEnum.LOOSE_LIFE : PlayerResultEnum.SAFE;
-	}
+		const results = this.monsters.map((monster: IMonster) =>
+			monster.move(this.isMyBlock, playerX, playerY),
+		);
+		return results.indexOf(PlayerResultEnum.LOOSE_LIFE) > -1
+			? PlayerResultEnum.LOOSE_LIFE
+			: PlayerResultEnum.SAFE;
+	};
 
-	public dropItem = (type: SpriteTypeEnum, playerX: number, playerY: number, direction: DirectionEnum): boolean => {
+	public dropItem = (
+		type: SpriteTypeEnum,
+		playerX: number,
+		playerY: number,
+		direction: DirectionEnum,
+	): boolean => {
 		let x = playerX,
 			y = playerY;
 
 		switch (direction) {
 			case DirectionEnum.UP:
-				y--; break;
+				y--;
+				break;
 			case DirectionEnum.RIGHT:
-				x++; break;
+				x++;
+				break;
 			case DirectionEnum.DOWN:
-				y++; break;
+				y++;
+				break;
 			case DirectionEnum.LEFT:
-				x--; break;
+				x--;
+				break;
 		}
 
 		if (this.isMyBlock(x, y, SpriteTypeEnum.BLANK)) {
 			this.setBlock(type, x, y);
 			this.updateBoard(playerX, playerY);
-			return true
+			return true;
 		}
 
 		return false;
-	}
+	};
 
-	public isMyBlock = (x: number, y: number, type: SpriteTypeEnum): boolean => this.board[y-1][x-1] === type;
+	public isMyBlock = (x: number, y: number, type: SpriteTypeEnum): boolean =>
+		this.board[y - 1][x - 1] === type;
 	public collectStar = (): number => this.stars--;
 
 	public readLevel = async (): Promise<void> => {
 		this.board = await this.fileService.readFile(this.currentLevel);
-	}
+	};
 
 	public getBoard = async (): Promise<void> => {
 		await this.readLevel();
@@ -176,7 +215,7 @@ export default class Board implements IBoard {
 		const { xPos, yPos } = this.getPlayerStartPosition();
 		this.startX = xPos ?? this.startX;
 		this.startY = yPos ?? this.startY;
-		if (xPos && yPos) this.board[yPos-1][xPos-1] = 0;
+		if (xPos && yPos) this.board[yPos - 1][xPos - 1] = 0;
 
 		this.setBoard(this.startX, this.startY);
 		this.stars = 0;
@@ -185,43 +224,59 @@ export default class Board implements IBoard {
 		this.boardHeight = this.board.length;
 		this.xMargin = Math.floor(this.SPRITE_BLOCKS_WIDTH / 2);
 		this.yMargin = Math.floor(this.SPRITE_BLOCKS_HEIGHT / 2);
-	}
+	};
 
 	public boulderDrop = (playerX: number, playerY: number): PlayerResultEnum => {
-		const boulders = [];
+		const boulders: { direction: DirectionEnum; x: number; y: number }[] = [];
 
-		for(let x = 0; x <= this.board.length; x++) {
-			for(let y = 0; y < this.board[0].length; y++) {
+		for (let x = 0; x <= this.board.length; x++) {
+			for (let y = 0; y < this.board[0].length; y++) {
 				if (
 					this.board[y][x] === SpriteTypeEnum.DROP_BOULDER &&
 					y < this.boardHeight - this.yMargin - 1 &&
 					this.board[y + 1][x] === SpriteTypeEnum.BLANK
-				) boulders.push({ direction: DirectionEnum.DOWN, x, y });
+				)
+					boulders.push({ direction: DirectionEnum.DOWN, x, y });
 
 				if (
 					this.board[y][x] === SpriteTypeEnum.DROP_BOULDER &&
 					y < this.boardHeight - this.yMargin - 1 &&
 					this.board[y + 1][x] === SpriteTypeEnum.DROP_WALL_RIGHT &&
 					this.board[y][x + 1] === SpriteTypeEnum.BLANK
-				) boulders.push({ direction: DirectionEnum.RIGHT, x, y });
+				)
+					boulders.push({ direction: DirectionEnum.RIGHT, x, y });
 
 				if (
 					this.board[y][x] === SpriteTypeEnum.DROP_BOULDER &&
 					y < this.boardHeight - this.yMargin - 1 &&
 					this.board[y + 1][x] === SpriteTypeEnum.DROP_WALL_LEFT &&
 					this.board[y][x - 1] === SpriteTypeEnum.BLANK
-				) boulders.push({ direction: DirectionEnum.LEFT, x, y });
+				)
+					boulders.push({ direction: DirectionEnum.LEFT, x, y });
 			}
 		}
 
-		const results = boulders.map((boulder: any) => this.dropBoulder(boulder.direction, boulder.x, boulder.y, playerX, playerY));
-		return results.indexOf(PlayerResultEnum.LOOSE_LIFE) > - 1 ? PlayerResultEnum.LOOSE_LIFE : PlayerResultEnum.SAFE;
-	}
+		const results = boulders.map((boulder) =>
+			this.dropBoulder(boulder.direction, boulder.x, boulder.y, playerX, playerY),
+		);
+		return results.indexOf(PlayerResultEnum.LOOSE_LIFE) > -1
+			? PlayerResultEnum.LOOSE_LIFE
+			: PlayerResultEnum.SAFE;
+	};
 
-	private dropBoulder = (direction: DirectionEnum, x: number, y: number, playerX: number, playerY: number): PlayerResultEnum => {
-		if (direction === DirectionEnum.DOWN && this.isPlayerBelow(x, y, playerX, playerY)) return PlayerResultEnum.SAFE;
-		if (direction === DirectionEnum.RIGHT && this.isPlayerRight(x, y, playerX, playerY)) return PlayerResultEnum.SAFE;
-		if (direction === DirectionEnum.LEFT && this.isPlayerLeft(x, y, playerX, playerY)) return PlayerResultEnum.SAFE;
+	private dropBoulder = (
+		direction: DirectionEnum,
+		x: number,
+		y: number,
+		playerX: number,
+		playerY: number,
+	): PlayerResultEnum => {
+		if (direction === DirectionEnum.DOWN && this.isPlayerBelow(x, y, playerX, playerY))
+			return PlayerResultEnum.SAFE;
+		if (direction === DirectionEnum.RIGHT && this.isPlayerRight(x, y, playerX, playerY))
+			return PlayerResultEnum.SAFE;
+		if (direction === DirectionEnum.LEFT && this.isPlayerLeft(x, y, playerX, playerY))
+			return PlayerResultEnum.SAFE;
 
 		this.board[y][x] = SpriteTypeEnum.BLANK;
 
@@ -231,13 +286,16 @@ export default class Board implements IBoard {
 
 		this.updateBoard(playerX, playerY);
 		return PlayerResultEnum.SAFE;
-	}
+	};
 
-	private isPlayerBelow = (x: number, y: number, playerX: number, playerY: number): boolean => x + 1 === playerX && y + 2 === playerY;
-	private isPlayerRight = (x: number, y: number, playerX: number, playerY: number): boolean => x + 2 === playerX && y + 1 === playerY;
-	private isPlayerLeft = (x: number, y: number, playerX: number, playerY: number): boolean => x === playerX && y + 1 === playerY;
+	private isPlayerBelow = (x: number, y: number, playerX: number, playerY: number): boolean =>
+		x + 1 === playerX && y + 2 === playerY;
+	private isPlayerRight = (x: number, y: number, playerX: number, playerY: number): boolean =>
+		x + 2 === playerX && y + 1 === playerY;
+	private isPlayerLeft = (x: number, y: number, playerX: number, playerY: number): boolean =>
+		x === playerX && y + 1 === playerY;
 
-	private getPlayerStartPosition = (): any => {
+	private getPlayerStartPosition = (): IBoardPosition => {
 		for (let y = 1; y < this.board.length; y++) {
 			const x = this.board[y].indexOf(SpriteTypeEnum.START);
 			if (x > -1) {
@@ -246,62 +304,76 @@ export default class Board implements IBoard {
 		}
 
 		return { xPos: null, yPos: null };
-	}
+	};
 
 	private getMonsters = (): IMonster[] => {
 		const monsters: IMonster[] = [];
 
-		for(let x = 0; x <= this.board.length; x++) {
-			for(let y = 0; y < this.board[0].length; y++) {
+		for (let x = 0; x <= this.board.length; x++) {
+			for (let y = 0; y < this.board[0].length; y++) {
 				const block = this.board[y][x];
-				if (block === SpriteTypeEnum.POINTS) this.stars ++;
+				if (block === SpriteTypeEnum.POINTS) this.stars++;
 				if (block >= 97 && block <= 99) {
 					this.board[y][x] = SpriteTypeEnum.BLANK;
 					const type: string = MonsterTypeEnum[block];
 					const direction: string = DirectionEnum[block - 96];
 
-					monsters.push(new Monster({
-						key: `monster-${ monsters.length + 1 }`,
-						visable: true,
-						x: x + 1,
-						y: y + 1,
-						width: 3,
-						height: 3,
-						blocksWidth: this.SPRITE_BLOCKS_WIDTH,
-						blocksHeight: this.SPRITE_BLOCKS_HEIGHT,
-						// @ts-ignore
-						type: MonsterTypeEnum[type],
-						// @ts-ignore
-						direction: DirectionEnum[direction],
-					}));
+					monsters.push(
+						new Monster({
+							key: `monster-${monsters.length + 1}`,
+							visable: true,
+							x: x + 1,
+							y: y + 1,
+							width: 3,
+							height: 3,
+							blocksWidth: this.SPRITE_BLOCKS_WIDTH,
+							blocksHeight: this.SPRITE_BLOCKS_HEIGHT,
+							type: monsterTypeByName(type),
+							direction: directionByName(direction),
+						}),
+					);
 				}
 			}
 		}
 
 		return monsters;
-	}
+	};
 
-	private updateBlock = (block: number, x: number, y: number, blockX: number, blockY: number): void => {
-		const sprite = this.sprites.find((spr: ISprite) => spr.key === `sprite-${ x }-${ y }`);
+	private updateBlock = (
+		block: number,
+		x: number,
+		y: number,
+		blockX: number,
+		blockY: number,
+	): void => {
+		const sprite = this.sprites.find((spr: ISprite) => spr.key === `sprite-${x}-${y}`);
 		if (!sprite) return;
 
 		const type: string = SpriteTypeEnum[block];
-		// @ts-ignore
-		sprite.updateImage(ImageEnum[this.spriteName(block)]);
-		// @ts-ignore
-		sprite.updateType(SpriteTypeEnum[type]);
+		sprite.updateImage(imageForBlock(block));
+		sprite.updateType(spriteTypeByName(type));
 		sprite.blockX = blockX + 1;
 		sprite.blockY = blockY + 1;
-	}
+	};
 
-	private xStart = (playerX: number): number => playerX - Math.floor(this.SPRITE_BLOCKS_WIDTH / 2) - 1;
-	private yStart = (playerY: number): number => playerY - Math.floor(this.SPRITE_BLOCKS_HEIGHT / 2) - 1;
+	private xStart = (playerX: number): number =>
+		playerX - Math.floor(this.SPRITE_BLOCKS_WIDTH / 2) - 1;
+	private yStart = (playerY: number): number =>
+		playerY - Math.floor(this.SPRITE_BLOCKS_HEIGHT / 2) - 1;
 
-	private newBlock = (x: number, y: number, blockX: number, blockY: number, width: number, height: number, block: number): ISprite => {
+	private newBlock = (
+		x: number,
+		y: number,
+		blockX: number,
+		blockY: number,
+		width: number,
+		height: number,
+		block: number,
+	): ISprite => {
 		const type: string = SpriteTypeEnum[block];
 
 		return new Sprite({
-			key: `sprite-${ x }-${ y }`,
+			key: `sprite-${x}-${y}`,
 			visable: true,
 			x: (x - 1) * width + 1,
 			y: (y - 1) * height + 1,
@@ -309,31 +381,29 @@ export default class Board implements IBoard {
 			blockY: blockY + 1,
 			width,
 			height,
-			// @ts-ignore
-			image: ImageEnum[this.spriteName(block)],
-			// @ts-ignore
-			type: SpriteTypeEnum[type],
+			image: imageForBlock(block),
+			type: spriteTypeByName(type),
 			outline: false,
-		})
-	}
+		});
+	};
 
 	private allSprites = (): ISprite[] => {
-		const sprites = Object.keys(SpriteTypeEnum)
+		const sprites = Object.keys(SpriteTypeEnum);
 		const halfLength = Math.ceil(sprites.length / 2);
 		let x = 0;
 		let y = 1;
-		
-		const allSprites: ISprite[] = sprites.splice(0, halfLength).map((value: string, block: number) => {
-			x++;
-			if (x > this.SPRITE_BLOCKS_WIDTH * this.SPRITE_WIDTH) {
-				x = 1;
-				y++;
-			}
-			return this.newBlock(x, y, 1, 1, 1, 1, parseInt(value))
-		})
+
+		const allSprites: ISprite[] = sprites
+			.splice(0, halfLength)
+			.map((value: string, _block: number) => {
+				x++;
+				if (x > this.SPRITE_BLOCKS_WIDTH * this.SPRITE_WIDTH) {
+					x = 1;
+					y++;
+				}
+				return this.newBlock(x, y, 1, 1, 1, 1, parseInt(value));
+			});
 
 		return allSprites;
-	}
-
-	private spriteName = (sprite: number) => `SPRITE${ sprite.toString().length === 1 ? '0' : '' }${ sprite }`;
+	};
 }

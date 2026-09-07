@@ -1,7 +1,7 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Info Board Should render correctly 1`] = `
-Object {
+exports[`Info Board > Should render correctly 1`] = `
+{
   "asFragment": [Function],
   "baseElement": <body>
     <div>
@@ -14,7 +14,7 @@ Object {
         >
           <img
             alt="player"
-            src="player-stand.png"
+            src="/src/images/player-stand.png"
           />
           <span
             class="header-text"
@@ -23,7 +23,7 @@ Object {
           </span>
           <img
             alt="player"
-            src="player-stand.png"
+            src="/src/images/player-stand.png"
           />
         </div>
         <div
@@ -46,15 +46,18 @@ Object {
           class="info-board-instructions"
         >
           <p>
-            This is a remake of two of my favourite games for the 
+            This is a remake of two of my favourite games for the
+             
             <a
               href="https://en.wikipedia.org/wiki/BBC_Micro"
               rel="noopener noreferrer"
               target="_blank"
             >
-               BBC Micro
+               
+              BBC Micro
             </a>
-            , 
+            ,
+             
             <a
               href="https://en.wikipedia.org/wiki/Repton_(video_game)"
               rel="noopener noreferrer"
@@ -62,7 +65,9 @@ Object {
             >
               Repton
             </a>
-             and 
+             
+            and
+             
             <a
               href="https://en.wikipedia.org/wiki/Pipeline_(video_game)"
               rel="noopener noreferrer"
@@ -162,7 +167,7 @@ Object {
       >
         <img
           alt="player"
-          src="player-stand.png"
+          src="/src/images/player-stand.png"
         />
         <span
           class="header-text"
@@ -171,7 +176,7 @@ Object {
         </span>
         <img
           alt="player"
-          src="player-stand.png"
+          src="/src/images/player-stand.png"
         />
       </div>
       <div
@@ -194,15 +199,18 @@ Object {
         class="info-board-instructions"
       >
         <p>
-          This is a remake of two of my favourite games for the 
+          This is a remake of two of my favourite games for the
+           
           <a
             href="https://en.wikipedia.org/wiki/BBC_Micro"
             rel="noopener noreferrer"
             target="_blank"
           >
-             BBC Micro
+             
+            BBC Micro
           </a>
-          , 
+          ,
+           
           <a
             href="https://en.wikipedia.org/wiki/Repton_(video_game)"
             rel="noopener noreferrer"
@@ -210,7 +218,9 @@ Object {
           >
             Repton
           </a>
-           and 
+           
+          and
+           
           <a
             href="https://en.wikipedia.org/wiki/Pipeline_(video_game)"
             rel="noopener noreferrer"

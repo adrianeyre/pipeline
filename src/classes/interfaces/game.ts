@@ -11,7 +11,7 @@ export default interface IGame {
 	level: number;
 	monsterIteration: number;
 	boulderIteration: number;
-	timer: any;
+	timer: ReturnType<typeof setInterval> | undefined;
 	playerTimeOut: number;
 	isGameInPlay: boolean;
 	timerInterval: number;

@@ -1,0 +1,8 @@
+dist
+dist-web
+coverage
+node_modules
+CHANGELOG.md
+package-lock.json
+src/**/__snapshots__
+src/levels
