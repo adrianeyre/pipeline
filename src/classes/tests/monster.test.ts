@@ -4,7 +4,7 @@ import MonsterTypeEnum from '../enums/monster-type-enum';
 import DirectEnum from '../enums/direction-enum';
 
 describe('Monster', () => {
-	let defaultConfig: IMonsterProps
+	let defaultConfig: IMonsterProps;
 
 	beforeEach(() => {
 		defaultConfig = {
@@ -18,8 +18,8 @@ describe('Monster', () => {
 			blocksHeight: 6,
 			type: MonsterTypeEnum.DIRECTIONAL,
 			direction: DirectEnum.DOWN,
-		}
-	})
+		};
+	});
 
 	it('Should create Monster class', () => {
 		const board = new Monster(defaultConfig);

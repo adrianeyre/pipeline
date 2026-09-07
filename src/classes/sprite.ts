@@ -74,18 +74,61 @@ export default class Sprite implements ISprite {
 
 	readonly Z_INDEX: number = 5000;
 	readonly playerImages = {
-		sprite00, sprite01, sprite02, sprite03, sprite04, sprite05,
-		sprite06, sprite07, sprite08, sprite09, sprite10, sprite11,
-		sprite12, sprite13, sprite14, sprite15, sprite16, sprite17,
-		sprite18, sprite19, sprite20, sprite21, sprite22, sprite23,
-		sprite24, sprite25, sprite26, sprite27, sprite28, sprite29,
-		sprite30, sprite31, sprite32, sprite33, sprite34, sprite35,
-		sprite36, sprite37, sprite38, sprite39, sprite40, sprite41,
-		sprite42, sprite43, sprite44, sprite45, sprite46, sprite47,
+		sprite00,
+		sprite01,
+		sprite02,
+		sprite03,
+		sprite04,
+		sprite05,
+		sprite06,
+		sprite07,
+		sprite08,
+		sprite09,
+		sprite10,
+		sprite11,
+		sprite12,
+		sprite13,
+		sprite14,
+		sprite15,
+		sprite16,
+		sprite17,
+		sprite18,
+		sprite19,
+		sprite20,
+		sprite21,
+		sprite22,
+		sprite23,
+		sprite24,
+		sprite25,
+		sprite26,
+		sprite27,
+		sprite28,
+		sprite29,
+		sprite30,
+		sprite31,
+		sprite32,
+		sprite33,
+		sprite34,
+		sprite35,
+		sprite36,
+		sprite37,
+		sprite38,
+		sprite39,
+		sprite40,
+		sprite41,
+		sprite42,
+		sprite43,
+		sprite44,
+		sprite45,
+		sprite46,
+		sprite47,
 		sprite50,
-		sprite97, sprite98, sprite99,
-		monster, player,
-	}
+		sprite97,
+		sprite98,
+		sprite99,
+		monster,
+		player,
+	};
 
 	constructor(config: ISpriteProps) {
 		this.key = config.key;
@@ -102,6 +145,6 @@ export default class Sprite implements ISprite {
 		this.type = config.type;
 	}
 
-	public updateImage = (image: ImageEnum): string => this.image = this.playerImages[image];
-	public updateType = (type: SpriteTypeEnum): SpriteTypeEnum => this.type = type;
+	public updateImage = (image: ImageEnum): string => (this.image = this.playerImages[image]);
+	public updateType = (type: SpriteTypeEnum): SpriteTypeEnum => (this.type = type);
 }

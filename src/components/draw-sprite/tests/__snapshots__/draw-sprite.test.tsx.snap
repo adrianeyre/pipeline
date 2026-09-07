@@ -1,19 +1,19 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`Draw Sprite Should render correctly 1`] = `
-Object {
+exports[`Draw Sprite > Should render correctly 1`] = `
+{
   "asFragment": [Function],
   "baseElement": <body>
     <div>
       <div
         class="game-sprite"
-        style="width: 0px; height: 0px; opacity: 1; transform: translate3d(18px, 18px, 0); z-index: 6000;"
+        style="width: 0px; height: 0px; opacity: 1; -webkit-transform: translate3d(18px, 18px, 0); transform: translate3d(18px, 18px, 0); z-index: 6000;"
       >
         <img
           alt="sprite"
           class=""
           height="3"
-          src="player-stand1.png"
+          src="/src/images/player-stand1.png"
           width="3"
         />
       </div>
@@ -22,13 +22,13 @@ Object {
   "container": <div>
     <div
       class="game-sprite"
-      style="width: 0px; height: 0px; opacity: 1; transform: translate3d(18px, 18px, 0); z-index: 6000;"
+      style="width: 0px; height: 0px; opacity: 1; -webkit-transform: translate3d(18px, 18px, 0); transform: translate3d(18px, 18px, 0); z-index: 6000;"
     >
       <img
         alt="sprite"
         class=""
         height="3"
-        src="player-stand1.png"
+        src="/src/images/player-stand1.png"
         width="3"
       />
     </div>

@@ -11,7 +11,7 @@ describe('Draw Sprite', () => {
 			height: 1,
 			width: 1,
 			containerWidth: 100,
-			handleClick: jest.fn(),
+			handleClick: vi.fn(),
 		};
 
 		const drawSprite = render(<DrawSprite {...defaultProps} />);

@@ -1,4 +1,4 @@
-@import '../../default-styles/colours.scss';
+@use '../../default-styles/colours' as *;
 
 .game-status-bottom {
 	width: 100%;

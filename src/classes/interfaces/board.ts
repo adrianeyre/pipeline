@@ -1,3 +1,4 @@
+import IBoardPosition from './board-position';
 import ISprite from './sprite';
 import IInventory from './inventory';
 import IMonster from './monster';
@@ -28,11 +29,21 @@ export default interface IBoard {
 	updateBoard(playerX: number, playerY: number): void;
 	validate(x: number, y: number): StriteTypeEnum;
 	setBlock(block: number, x: number, y: number): number;
-	moveBoulder(block: SpriteTypeEnum, x: number, y: number, direction: DirectionEnum): PlayerResultEnum;
+	moveBoulder(
+		block: SpriteTypeEnum,
+		x: number,
+		y: number,
+		direction: DirectionEnum,
+	): PlayerResultEnum;
 	moveMonstersWithPlayer(playerX: number, playerY: number): PlayerResultEnum;
 	moveMonstersWithTimer(playerX: number, playerY: number): PlayerResultEnum;
-	teleport(x: number, y: number, block: SpriteTypeEnum): any;
+	teleport(x: number, y: number, block: SpriteTypeEnum): IBoardPosition;
 	isMyBlock(x: number, y: number, type: SpriteTypeEnum): boolean;
-	dropItem(type: SpriteTypeEnum, playerX: number, playerY: number, direction: DirectionEnum): boolean;
+	dropItem(
+		type: SpriteTypeEnum,
+		playerX: number,
+		playerY: number,
+		direction: DirectionEnum,
+	): boolean;
 	readLevel(): Promise<void>;
 }

@@ -1,4 +1,4 @@
-@import '../../default-styles/colours.scss';
+@use '../../default-styles/colours' as *;
 
 .sprite-selection-bottom {
 	width: 100%;

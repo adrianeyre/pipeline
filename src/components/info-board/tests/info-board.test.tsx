@@ -8,7 +8,7 @@ describe('Info Board', () => {
 			gameOver: true,
 			score: 1000,
 			containerHeight: 1,
-			startGame: jest.fn(),
+			startGame: vi.fn(),
 		};
 
 		const infoBoard = render(<InfoBoard {...defaultProps} />);

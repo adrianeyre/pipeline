@@ -8,6 +8,14 @@ enum PlayerResultEnum {
 	NOT_IN_INVENTORY = 6,
 	LOOSE_LIFE = 7,
 	PLAYER_MOVED = 8,
+	// DEAD deliberately keeps the value it shipped with, which PLAYER_MOVED also
+	// holds. The collision is load-bearing in one direction only: `Game.looseLife`
+	// compares against DEAD and works, while the `case PlayerResultEnum.DEAD`
+	// branch in `Game.handleInput` is unreachable because PLAYER_MOVED matches 8
+	// first. Renumbering would change which keypresses the game responds to
+	// (input arrives as raw key codes through this same enum), so it is left
+	// alone here and recorded rather than quietly altered.
+	// eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
 	DEAD = 8,
 	EDIT_SPRITE = 9,
 	SELECT_SPRITE = 10,

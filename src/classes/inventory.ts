@@ -1,3 +1,4 @@
+import { imageForBlock, spriteTypeByName } from './enum-lookup';
 import IInventory from './interfaces/inventory';
 import IInventoryProps from './interfaces/inventory-props';
 import SpriteTypeEnum from './enums/sprite-type-enum';
@@ -17,7 +18,7 @@ export default class Inventory implements IInventory {
 	public maxItems: number;
 
 	readonly WIDTH: number = 1;
-	readonly HEIGHT: number = 1
+	readonly HEIGHT: number = 1;
 	readonly X_OFFSET: number = 8;
 	readonly BLANK: number = 0;
 	readonly MAX_ITEMS: number = 3;
@@ -37,39 +38,43 @@ export default class Inventory implements IInventory {
 	}
 
 	public addItem = (block: SpriteTypeEnum): PlayerResultEnum => {
-		const sprite = this.sprites.find((spr: ISprite) => spr.key.substring(0, 10) === `inventory-` && spr.type === SpriteTypeEnum.BLANK);
+		const sprite = this.sprites.find(
+			(spr: ISprite) =>
+				spr.key.substring(0, 10) === `inventory-` && spr.type === SpriteTypeEnum.BLANK,
+		);
 		if (!sprite) return PlayerResultEnum.INVENTORY_FULL;
 
 		sprite.updateType(block);
-		// @ts-ignore
-		sprite.updateImage(ImageEnum[this.spriteName(block)]);
+		sprite.updateImage(imageForBlock(block));
 
 		return PlayerResultEnum.INVENTORY_ADDED;
-	}
+	};
 
 	public useItem = (block: SpriteTypeEnum): PlayerResultEnum => {
-		const sprite = this.sprites.find((spr: ISprite) => spr.key === `inventory-${ this.slot }` && spr.type === block);
+		const sprite = this.sprites.find(
+			(spr: ISprite) => spr.key === `inventory-${this.slot}` && spr.type === block,
+		);
 		if (!sprite) return PlayerResultEnum.NOT_IN_INVENTORY;
 
 		sprite.updateImage(ImageEnum.SPRITE00);
 		sprite.updateType(SpriteTypeEnum.BLANK);
 
 		return PlayerResultEnum.INVENTORY_USED;
-	}
+	};
 
 	public moveSlot = (): void => {
 		this.setSlot(ImageEnum.SPRITE00);
-		this.slot ++;
+		this.slot++;
 		if (this.slot > this.MAX_ITEMS) this.slot = 1;
 		this.setSlot(ImageEnum.PLAYER);
-	}
+	};
 
 	public drop = (): SpriteTypeEnum | null => {
-		const sprite = this.sprites.find((spr: ISprite) => spr.key === `inventory-${ this.slot }`);
+		const sprite = this.sprites.find((spr: ISprite) => spr.key === `inventory-${this.slot}`);
 		if (!sprite || sprite.type === SpriteTypeEnum.BLANK) return null;
 
 		return sprite.type;
-	}
+	};
 
 	public remove = (type: SpriteTypeEnum): void => {
 		const sprite = this.sprites.find((spr: ISprite) => spr.type === type);
@@ -77,25 +82,45 @@ export default class Inventory implements IInventory {
 
 		sprite.updateImage(ImageEnum.SPRITE00);
 		sprite.updateType(SpriteTypeEnum.BLANK);
-	}
+	};
 
 	private setSlot = (image: ImageEnum): void => {
-		const sprite = this.sprites.find((spr: ISprite) => spr.key === `selected-inventory-${ this.slot }`);
+		const sprite = this.sprites.find(
+			(spr: ISprite) => spr.key === `selected-inventory-${this.slot}`,
+		);
 		if (!sprite) return;
 
 		sprite.updateImage(image);
-	}
+	};
 
 	private setupInventory = (): void => {
 		let count = 0;
 		for (let x = 1; x <= this.MAX_ITEMS * 2; x += 2) {
-			count ++;
-			this.sprites.push(this.newBlock(`selected-inventory-${ count }`, x * 2, this.WIDTH, this.HEIGHT, this.BLANK, false));
-			this.sprites.push(this.newBlock(`inventory-${ count }`, x * 2 + 1, this.WIDTH, this.HEIGHT, this.BLANK, true));
+			count++;
+			this.sprites.push(
+				this.newBlock(
+					`selected-inventory-${count}`,
+					x * 2,
+					this.WIDTH,
+					this.HEIGHT,
+					this.BLANK,
+					false,
+				),
+			);
+			this.sprites.push(
+				this.newBlock(`inventory-${count}`, x * 2 + 1, this.WIDTH, this.HEIGHT, this.BLANK, true),
+			);
 		}
-	}
+	};
 
-	private newBlock = (key: string, x: number, width: number, height: number, block: number, outline: boolean): ISprite => {
+	private newBlock = (
+		key: string,
+		x: number,
+		width: number,
+		height: number,
+		block: number,
+		outline: boolean,
+	): ISprite => {
 		const type: string = SpriteTypeEnum[block];
 
 		return new Sprite({
@@ -107,13 +132,9 @@ export default class Inventory implements IInventory {
 			height,
 			blockX: 0,
 			blockY: 0,
-			// @ts-ignore
-			image: ImageEnum[this.spriteName(block)],
-			// @ts-ignore
-			type: SpriteTypeEnum[type],
+			image: imageForBlock(block),
+			type: spriteTypeByName(type),
 			outline,
-		})
+		});
 	};
-
-	private spriteName = (sprite: number): string => `SPRITE${ sprite.toString().length === 1 ? '0' : '' }${ sprite }`;
 }

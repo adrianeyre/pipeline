@@ -26,13 +26,13 @@ export default class Player implements IPlayer {
 	public x: number;
 	public y: number;
 	public blockX: number;
-	public blockY: number
+	public blockY: number;
 	public startX: number;
 	public startY: number;
 	public width: number;
 	public height: number;
 	public iteration: number;
-	public zIndex: number
+	public zIndex: number;
 	public direction: DirectionEnum;
 	public score: number;
 	public lives: number;
@@ -60,8 +60,8 @@ export default class Player implements IPlayer {
 		this.visable = true;
 		this.outline = false;
 		this.iteration = 0;
-		this.x = (this.INITIAL_PLAYER_X - 1 ) * this.PLAYER_WIDTH + 1;
-		this.y = (this.INITIAL_PLAYER_Y - 1 ) * this.PLATER_HEIGHT + 1;
+		this.x = (this.INITIAL_PLAYER_X - 1) * this.PLAYER_WIDTH + 1;
+		this.y = (this.INITIAL_PLAYER_Y - 1) * this.PLATER_HEIGHT + 1;
 		this.blockX = this.INITIAL_PLAYER_X;
 		this.blockY = this.INITIAL_PLAYER_Y;
 		this.startX = 0;
@@ -82,16 +82,16 @@ export default class Player implements IPlayer {
 		this.blockY = y;
 		this.startX = x;
 		this.startY = y;
-	}
+	};
 
 	public looseLife = (): PlayerResultEnum => {
-		this.lives --;
+		this.lives--;
 		this.inPipe = false;
 		this.resetStartPosition();
 
-		return this.lives < 1 ? PlayerResultEnum.DEAD : PlayerResultEnum.SAFE
-	}
-	
+		return this.lives < 1 ? PlayerResultEnum.DEAD : PlayerResultEnum.SAFE;
+	};
+
 	public move = (direction: DirectionEnum, board: IBoard, editing: boolean): PlayerResultEnum => {
 		this.direction = direction;
 
@@ -100,13 +100,17 @@ export default class Player implements IPlayer {
 
 		switch (direction) {
 			case DirectionEnum.UP:
-				y --; break;
+				y--;
+				break;
 			case DirectionEnum.RIGHT:
-				x ++; break;
+				x++;
+				break;
 			case DirectionEnum.DOWN:
-				y ++; break;
+				y++;
+				break;
 			case DirectionEnum.LEFT:
-				x --; break;
+				x--;
+				break;
 		}
 
 		if (!this.playerInBoundaries(x, y, board)) return PlayerResultEnum.SAFE;
@@ -121,19 +125,29 @@ export default class Player implements IPlayer {
 
 		switch (block) {
 			case SpriteTypeEnum.BLANK:
-				this.moveToBlank(x, y); break;
+				this.moveToBlank(x, y);
+				break;
 			case SpriteTypeEnum.POINTS:
-				this.addStarPoints(); this.movePlayer(x, y); result = PlayerResultEnum.STAR; break;
+				this.addStarPoints();
+				this.movePlayer(x, y);
+				result = PlayerResultEnum.STAR;
+				break;
 			case SpriteTypeEnum.GRASS:
-				this.movePlayer(x, y); result = PlayerResultEnum.GRASS; break;
+				this.movePlayer(x, y);
+				result = PlayerResultEnum.GRASS;
+				break;
 			case SpriteTypeEnum.BOULDER:
-				this.moveBoulder(x, y, direction, board, block); result = PlayerResultEnum.BOLDER_MOVED; break;
+				this.moveBoulder(x, y, direction, board, block);
+				result = PlayerResultEnum.BOLDER_MOVED;
+				break;
 			case SpriteTypeEnum.DROP_BOULDER:
-				result = this.moveDropBoulder(x, y, direction, board, block); break
+				result = this.moveDropBoulder(x, y, direction, board, block);
+				break;
 			case SpriteTypeEnum.HORIZONTAL_PIPE:
 			case SpriteTypeEnum.VERTICAL_PIPE:
 			case SpriteTypeEnum.CONNECTION_PIPE:
-				this.movePipe(x, y, direction, board); break;
+				this.movePipe(x, y, direction, board);
+				break;
 			case SpriteTypeEnum.TELEPORT01:
 			case SpriteTypeEnum.TELEPORT02:
 			case SpriteTypeEnum.TELEPORT03:
@@ -144,13 +158,15 @@ export default class Player implements IPlayer {
 			case SpriteTypeEnum.TELEPORT08:
 			case SpriteTypeEnum.TELEPORT09:
 			case SpriteTypeEnum.TELEPORT10:
-				this.teleport(x, y, board, block); break;
+				this.teleport(x, y, board, block);
+				break;
 			case SpriteTypeEnum.WALL:
 			case SpriteTypeEnum.WALL01:
 			case SpriteTypeEnum.WALL02:
 			case SpriteTypeEnum.WALL03:
 			case SpriteTypeEnum.WALL04:
-				this.useAxe(x, y, board, block); break;
+				this.useAxe(x, y, board, block);
+				break;
 			case SpriteTypeEnum.RED_GATE:
 			case SpriteTypeEnum.BLUE_GATE:
 			case SpriteTypeEnum.LIGHT_GREEN_GATE:
@@ -161,7 +177,8 @@ export default class Player implements IPlayer {
 			case SpriteTypeEnum.BROWN_GATE:
 			case SpriteTypeEnum.GREY_GATE:
 			case SpriteTypeEnum.GREEN_GATE:
-				this.openGate(x, y, board, block); break;
+				this.openGate(x, y, board, block);
+				break;
 			case SpriteTypeEnum.RED_KEY:
 			case SpriteTypeEnum.BLUE_KEY:
 			case SpriteTypeEnum.LIGHT_GREEN_KEY:
@@ -173,13 +190,15 @@ export default class Player implements IPlayer {
 			case SpriteTypeEnum.GREY_KEY:
 			case SpriteTypeEnum.GREEN_KEY:
 			case SpriteTypeEnum.AXE:
-				this.addInventory(x, y, board, block); break;
+				this.addInventory(x, y, board, block);
+				break;
 			case SpriteTypeEnum.SKULL:
-				result = PlayerResultEnum.LOOSE_LIFE; break;
+				result = PlayerResultEnum.LOOSE_LIFE;
+				break;
 		}
 
 		return result;
-	}
+	};
 
 	private playerInBoundaries = (x: number, y: number, board: IBoard): boolean =>
 		x > board.xMargin &&
@@ -192,42 +211,54 @@ export default class Player implements IPlayer {
 		this.showPlayer();
 		this.movePlayer(x, y);
 		return PlayerResultEnum.PLAYER_MOVED;
-	}
+	};
 
 	private movePlayer = (x: number, y: number): void => {
 		this.blockX = x;
 		this.blockY = y;
 		this.image = this.setImage();
-		this.iteration ++;
+		this.iteration++;
 		if (this.iteration > 3) this.iteration = 0;
-	}
+	};
 
-	private moveBoulder = (x: number, y: number, direction: DirectionEnum, board: IBoard, block: SpriteTypeEnum): void => {
+	private moveBoulder = (
+		x: number,
+		y: number,
+		direction: DirectionEnum,
+		board: IBoard,
+		block: SpriteTypeEnum,
+	): void => {
 		const result = board.moveBoulder(block, x, y, direction);
 
 		if (result === PlayerResultEnum.BOLDER_MOVED) this.movePlayer(x, y);
-	}
+	};
 
-	private moveDropBoulder = (x: number, y: number, direction: DirectionEnum, board: IBoard, block: SpriteTypeEnum): PlayerResultEnum => {
+	private moveDropBoulder = (
+		x: number,
+		y: number,
+		direction: DirectionEnum,
+		board: IBoard,
+		block: SpriteTypeEnum,
+	): PlayerResultEnum => {
 		if (direction === DirectionEnum.UP) return PlayerResultEnum.SAFE;
 		const result = board.moveBoulder(block, x, y, direction);
 
 		if (result === PlayerResultEnum.BOLDER_MOVED) this.movePlayer(x, y);
 		return result;
-	}
+	};
 
-	private useAxe = (x: number, y: number, board: IBoard, block: number) => {
+	private useAxe = (x: number, y: number, board: IBoard, _block: number) => {
 		if (board.inventory.useItem(SpriteTypeEnum.AXE) === PlayerResultEnum.INVENTORY_USED) {
 			board.setBlock(0, x, y);
 			this.movePlayer(x, y);
 		}
-	}
+	};
 
 	private addInventory = (x: number, y: number, board: IBoard, block: number) => {
 		const result = board.inventory.addItem(block);
 		if (result === PlayerResultEnum.INVENTORY_ADDED) board.setBlock(0, x, y);
 		this.movePlayer(x, y);
-	}
+	};
 
 	private openGate = (x: number, y: number, board: IBoard, block: number) => {
 		const result = board.inventory.useItem(block + 10);
@@ -235,7 +266,7 @@ export default class Player implements IPlayer {
 			board.setBlock(0, x, y);
 			this.movePlayer(x, y);
 		}
-	}
+	};
 
 	private movePipe = (x: number, y: number, direction: DirectionEnum, board: IBoard): void => {
 		let isDirectionHorizontal = false,
@@ -252,13 +283,18 @@ export default class Player implements IPlayer {
 		switch (direction) {
 			case DirectionEnum.UP:
 			case DirectionEnum.DOWN:
-				isDirectionVertical = true; break;
+				isDirectionVertical = true;
+				break;
 			case DirectionEnum.RIGHT:
 			case DirectionEnum.LEFT:
-				isDirectionHorizontal = true; break;
+				isDirectionHorizontal = true;
+				break;
 		}
 
-		if ((this.inPipe && isDirectionHorizontal && isVerticalPipe) || (this.inPipe && isDirectionVertical && isHorizontalPipe)) {
+		if (
+			(this.inPipe && isDirectionHorizontal && isVerticalPipe) ||
+			(this.inPipe && isDirectionVertical && isHorizontalPipe)
+		) {
 			this.movePlayer(x, y);
 			this.hidePlayer();
 		}
@@ -280,37 +316,44 @@ export default class Player implements IPlayer {
 			if (direction < 0) {
 				switch (this.direction) {
 					case DirectionEnum.UP:
-						direction = DirectionEnum.DOWN; break;
+						direction = DirectionEnum.DOWN;
+						break;
 					case DirectionEnum.DOWN:
-						direction = DirectionEnum.UP; break;
+						direction = DirectionEnum.UP;
+						break;
 					case DirectionEnum.RIGHT:
-						direction = DirectionEnum.LEFT; break;
+						direction = DirectionEnum.LEFT;
+						break;
 					case DirectionEnum.LEFT:
-						direction = DirectionEnum.RIGHT; break;
+						direction = DirectionEnum.RIGHT;
+						break;
 				}
 			}
 
 			this.move(direction, board, false);
 		}
-	}
+	};
 
 	private teleport = (x: number, y: number, board: IBoard, block: SpriteTypeEnum): void => {
 		if (this.direction === DirectionEnum.STAND) return;
 		const { xPos, yPos } = board.teleport(x, y, block);
 
 		if (xPos && yPos) this.movePlayer(xPos, yPos);
-	}
+	};
 
 	private resetStartPosition = (): void => {
 		this.blockX = this.startX;
 		this.blockY = this.startY;
-	}
+	};
 
-	private isVerticalPipe = (x: number, y: number, board: IBoard): boolean => board.isMyBlock(x, y, SpriteTypeEnum.VERTICAL_PIPE);
-	private isHorizontalPipe = (x: number, y: number, board: IBoard): boolean => board.isMyBlock(x, y, SpriteTypeEnum.HORIZONTAL_PIPE);
-	private isConnectionPipe = (x: number, y: number, board: IBoard): boolean => board.isMyBlock(x, y, SpriteTypeEnum.CONNECTION_PIPE);
-	private hidePlayer = (): boolean => this.visable = false;
-	private showPlayer = (): boolean => this.visable = true;
-	private addStarPoints = () => this.score += this.STAR_POINTS;
+	private isVerticalPipe = (x: number, y: number, board: IBoard): boolean =>
+		board.isMyBlock(x, y, SpriteTypeEnum.VERTICAL_PIPE);
+	private isHorizontalPipe = (x: number, y: number, board: IBoard): boolean =>
+		board.isMyBlock(x, y, SpriteTypeEnum.HORIZONTAL_PIPE);
+	private isConnectionPipe = (x: number, y: number, board: IBoard): boolean =>
+		board.isMyBlock(x, y, SpriteTypeEnum.CONNECTION_PIPE);
+	private hidePlayer = (): boolean => (this.visable = false);
+	private showPlayer = (): boolean => (this.visable = true);
+	private addStarPoints = () => (this.score += this.STAR_POINTS);
 	private setImage = (): string => this.playerImages[this.direction][this.iteration];
 }
